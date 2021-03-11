@@ -1,0 +1,84 @@
+:root {
+  --blue: #1e3799;
+  --white: #ffffff;
+  --grey: #f0f2f5;
+  --black: #192a3e;
+  --orange: #fa983a;
+  --light-grey: #dcdde1;
+  --dark-grey: #808e9b;
+  --border-radius: 0;
+  --border-radius-xs: 0.2rem;
+  --border-radius-md: 0;
+}
+
+html {
+  background-color: var(--grey);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default padding */
+ul[class],
+ol[class] {
+  padding: 0;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+button {
+  cursor: pointer;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  color: var(--black);
+}
+
+.App {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--grey);
+  padding: 10px;
+}
+
+.flex--horizontal {
+  display: flex;
+  align-items: center;
+}
+
+.flex--vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button:hover {
+  background-color: var(--dark-grey);
+}

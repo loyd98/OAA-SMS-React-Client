@@ -1,0 +1,6 @@
+src/registerServiceWorker.js
+src/index.js
+src/components/FontAwesomeIcons/FontAwesomeIcons.js
+src/reportWebVitals.js
+main.js
+src/**/*.jsx

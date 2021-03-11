@@ -1,0 +1,26 @@
+.header {
+  height: 30px;
+  width: 100px;
+  justify-content: space-around;
+  background-color: transparent;
+  border: 0;
+  position: relative;
+}
+
+.header__list {
+  min-width: 100px;
+  position: absolute;
+  background-color: var(--grey);
+}
+
+.header__listItem {
+  width: 100%;
+  height: 30px;
+  border: 0;
+  background-color: transparent;
+  text-align: left;
+}
+
+.header__listItem:hover {
+  background-color: var(--dark-grey);
+}

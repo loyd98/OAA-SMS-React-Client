@@ -1,0 +1,18 @@
+.left {
+  width: 30px;
+  height: 30px;
+  border-top-left-radius: var(--border-radius-xs);
+  border-bottom-left-radius: var(--border-radius-xs);
+  background-color: transparent;
+  margin-right: 2px;
+  border: 0;
+}
+
+.right {
+  width: 30px;
+  height: 30px;
+  border-top-right-radius: var(--border-radius-xs);
+  border-bottom-right-radius: var(--border-radius-xs);
+  background-color: transparent;
+  border: 0;
+}
