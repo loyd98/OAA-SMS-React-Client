@@ -15,6 +15,8 @@ import {
   faTimes,
   faArrowLeft,
   faArrowRight,
+  faEdit,
+  faShareSquare,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -33,4 +35,6 @@ library.add(
   faTimes,
   faArrowLeft,
   faArrowRight,
+  faEdit,
+  faShareSquare,
 );

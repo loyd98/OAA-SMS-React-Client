@@ -9,6 +9,20 @@ export default class Button extends Component {
     this.state = { isClicked: false, isHidden: true };
   }
 
+  toggleBtnActive = () => {
+    const { isClicked } = this.state;
+
+    this.setState({ isClicked: !isClicked });
+  };
+
+  hideCaption = () => {
+    this.setState({ isHidden: true });
+  };
+
+  unhideCaption = () => {
+    this.setState({ isHidden: false });
+  };
+
   render() {
     const { isClicked, isHidden } = this.state;
     const { children, isTransparent, message, type, onClick } = this.props;
@@ -31,8 +45,8 @@ export default class Button extends Component {
           className={`${transparent} ${clicked}`}
           onMouseDown={this.toggleBtnActive}
           onMouseUp={this.toggleBtnActive}
-          onMouseEnter={this.toggleCaption}
-          onMouseLeave={this.toggleCaption}
+          onMouseEnter={this.unhideCaption}
+          onMouseLeave={this.hideCaption}
           onClick={onClick}
         >
           {children}
@@ -44,14 +58,6 @@ export default class Button extends Component {
       </React.Fragment>
     );
   }
-
-  toggleBtnActive = () => {
-    this.setState({ isClicked: !this.state.isClicked });
-  };
-
-  toggleCaption = () => {
-    this.setState({ isHidden: !this.state.isHidden });
-  };
 }
 
 Button.propTypes = {

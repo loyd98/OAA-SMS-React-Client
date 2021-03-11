@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router';
+import { Redirect, withRouter } from 'react-router';
 import './Login.scoped.css';
 
-export default class Login extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
 
@@ -23,10 +23,6 @@ export default class Login extends Component {
       handleSubmit,
     } = this.props;
 
-    if (sessionStorage.getItem('token')) {
-      return <Redirect to="dashboard" />;
-    }
-
     return (
       <div className="login">
         <div className="login__container">
@@ -46,7 +42,15 @@ export default class Login extends Component {
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button id="login__proceed--btn" onClick={handleSubmit}>
+            <button
+              id="login__proceed--btn"
+              onClick={(e) => {
+                handleSubmit(e).then((resp) => {
+                  const { history } = this.props;
+                  if (resp) history.push('/dashboard');
+                });
+              }}
+            >
               Proceed
             </button>
             <div className="red flex-vertical hidden" id="login__error">
@@ -62,3 +66,5 @@ export default class Login extends Component {
     );
   }
 }
+
+export default withRouter(Login);

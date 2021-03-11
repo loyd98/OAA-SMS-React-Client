@@ -1,0 +1,26 @@
+module.exports = {
+  ordering: {
+    donors: [
+      // { key: '#', name: '#', width: '20px' },
+      { key: 'id', name: 'Donor ID', width: '50px' },
+      { key: 'donorName', name: 'Donor Name', width: '70px' },
+      { key: 'accountNumber', name: 'Account Number', width: '70px' },
+      { key: 'accountName', name: 'Account Name', width: '70px' },
+      { key: 'cellphoneNumber', name: 'Cellphone No.', width: '70px' },
+      { key: 'emailAddress', name: 'Email', width: '100px' },
+      { key: 'address1', name: 'Address 1', width: '100px' },
+      { key: 'address2', name: 'Address 2', width: '100px' },
+      { key: 'address3', name: 'Address 3', width: '100px' },
+      { key: 'address4', name: 'Address 4', width: '100px' },
+      { key: 'address5', name: 'Addres 5', width: '100px' },
+      { key: 'birthDate', name: 'Birth Date', width: '100px' },
+      { key: 'phone1', name: 'Phone 1', width: '100px' },
+      { key: 'phone2', name: 'Phone 2', width: '100px' },
+      { key: 'faxNumber', name: 'Fax No.', width: '100px' },
+      { key: 'companyAddress', name: 'Company Address', width: '100px' },
+      { key: 'companyTIN', name: 'Company TIN', width: '100px' },
+      { key: 'notes', name: 'Notes', width: '100px' },
+    ],
+  },
+  tables: ['Donors', 'Scholars', 'Scholarships', 'MOAs', 'Documents'],
+};

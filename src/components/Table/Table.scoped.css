@@ -128,9 +128,13 @@ table th:last-child {
   margin: 0;
 }
 
-.table__pagination span:first-child {
+.table__pagination span {
+  padding-top: 2px;
+  width: 30px;
+  height: 30px;
   text-align: center;
-  display: block;
+  background-color: var(--white);
+  margin-right: 5px;
 }
 
 .table__paginationDivider {

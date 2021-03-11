@@ -5,47 +5,108 @@ import './Table.scoped.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '../Buttons/Button/Button';
 import Dropdown from '../Dropdown/Dropdown';
+import { Redirect, withRouter } from 'react-router';
 
-export default class Table extends Component {
+const config = require('../../data.config');
+
+class Table extends Component {
   constructor(props) {
     super(props);
 
-    this.fields = [
-      { key: '#', name: '#', width: '20px' },
-      { key: 'id', name: 'Donor ID', width: '50px' },
-      { key: 'accountNumber', name: 'Account Number', width: '70px' },
-      { key: 'accountName', name: 'Account Name', width: '70px' },
-      { key: 'cellphoneNumber', name: 'Cellphone No.', width: '70px' },
-      { key: 'emailAddress', name: 'Email', width: '100px' },
-      { key: 'address1', name: 'Address 1', width: '100px' },
-      { key: 'address2', name: 'Address 2', width: '100px' },
-      { key: 'address3', name: 'Address 3', width: '100px' },
-      { key: 'address4', name: 'Address 4', width: '100px' },
-      { key: 'address5', name: 'Addres 5', width: '100px' },
-      { key: 'birthDate', name: 'Birth Date', width: '100px' },
-      { key: 'phone1', name: 'Phone 1', width: '100px' },
-      { key: 'phone2', name: 'Phone 2', width: '100px' },
-      { key: 'faxNumber', name: 'Fax No.', width: '100px' },
-      { key: 'companyAddress', name: 'Company Address', width: '100px' },
-      { key: 'companyTIN', name: 'Company TIN', width: '100px' },
-      { key: 'notes', name: 'Notes', width: '100px' },
-    ];
-    this.tables = ['Donors', 'Scholars', 'Scholarships', 'MOAs', 'Documents'];
+    this.fields = config.ordering.donors;
+    this.tables = config.tables;
     this.endColNum = 6;
     this.state = {
       height: 0,
       currentPage: 1,
       numOfPages: 1,
       itemsPerPage: Math.floor((window.innerHeight - 250) / 40),
+      isRedirect: false,
     };
   }
 
+  componentDidMount() {
+    const temp = sessionStorage.getItem('pageDetails');
+    const loadedData = JSON.parse(temp);
+    if (loadedData) {
+      const { currentPage, numOfPages, itemsPerPage } = loadedData;
+      this.setState({ currentPage, numOfPages, itemsPerPage });
+    } else {
+      const height = window.innerHeight;
+      const currentPage = 1;
+      const itemsPerPage = Math.floor((height - 250) / 40);
+      const numOfPages = Math.ceil(this.props.data.length / itemsPerPage);
+
+      this.setState({ currentPage, itemsPerPage, numOfPages });
+      const pageDetails = JSON.stringify({
+        currentPage,
+        itemsPerPage,
+        numOfPages,
+      });
+
+      sessionStorage.setItem('pageDetails', pageDetails);
+    }
+    window.addEventListener('resize', this.updateHeight);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateHeight);
+  }
+
+  handleLeftClick = () => {
+    this.setState((prevState) => ({
+      currentPage: prevState.currentPage > 1 ? prevState.currentPage - 1 : 1,
+    }));
+  };
+
+  handleRightClick = () => {
+    const { numOfPages } = this.state;
+
+    this.setState((prevState) => ({
+      currentPage:
+        prevState.currentPage < numOfPages
+          ? prevState.currentPage + 1
+          : numOfPages,
+    }));
+  };
+
+  sliceItems = (data, itemsPerPage, currentPage) => {
+    currentPage--;
+    let start = itemsPerPage * currentPage;
+    let end = start + itemsPerPage;
+    let paginatedItems = data.slice(start, end);
+    return paginatedItems;
+  };
+
+  updateHeight = () => {
+    const { height, currentPage } = this.state;
+    const { data } = this.props;
+
+    this.setState({ height: window.innerHeight });
+
+    const itemsPerPage = Math.floor((height - 250) / 40);
+    const numOfPages = Math.ceil(data.length / itemsPerPage);
+    if (itemsPerPage >= 0) {
+      this.setState({ currentPage, itemsPerPage, numOfPages });
+    }
+  };
+
+  redirectToView = (id) => {
+    console.log(id);
+    const { history } = this.props;
+    history.push(`view/1?id=${id}`);
+  };
+
   render() {
-    const { height, currentPage, numOfPages, itemsPerPage } = this.state;
+    const { currentPage, numOfPages, itemsPerPage, isRedirect } = this.state;
     const { data, currentTable } = this.props;
 
     const items = this.sliceItems(data, itemsPerPage, currentPage);
 
+    if (isRedirect) {
+      this.setState({ isRedirect: false });
+      return <Redirect to="/view" />;
+    }
     return (
       <table className="table">
         <thead id="table__top">
@@ -79,9 +140,9 @@ export default class Table extends Component {
                   onClick={this.handleLeftClick}
                 />
               </Button>
-              <Button isTransparent>{currentPage + ''}</Button>
-              <div className="table__paginationDivider flex--vertical" />
-              <Button isTransparent>{numOfPages + ''}</Button>
+              <span>
+                <sup>{currentPage}</sup>&frasl;<sub>{numOfPages}</sub>
+              </span>
               <Button isTransparent onClick={this.handleRightClick}>
                 <FontAwesomeIcon icon="arrow-right" />
               </Button>
@@ -144,7 +205,12 @@ export default class Table extends Component {
               })}
               <td style={{ width: '50px' }}>
                 <div className="flex--horizontal">
-                  <Button isTransparent={false} message="Edit" type="right">
+                  <Button
+                    isTransparent={false}
+                    message="View"
+                    type="right"
+                    onClick={() => this.redirectToView(row.id)}
+                  >
                     <FontAwesomeIcon icon="border-all" />
                   </Button>
                   <Button isTransparent={false} message="Delete" type="right">
@@ -158,65 +224,10 @@ export default class Table extends Component {
       </table>
     );
   }
-
-  handleRightClick = () => {
-    if (this.state.currentPage < this.state.numOfPages) {
-      this.setState((prevState) => ({
-        currentPage: prevState.currentPage + 1,
-      }));
-    }
-  };
-
-  handleLeftClick = () => {
-    if (this.state.currentPage > 1) {
-      this.setState((prevState) => ({
-        currentPage: prevState.currentPage - 1,
-      }));
-    }
-  };
-
-  sliceItems = (data, itemsPerPage, currentPage) => {
-    currentPage--;
-    let start = itemsPerPage * currentPage;
-    let end = start + itemsPerPage;
-    let paginatedItems = data.slice(start, end);
-    return paginatedItems;
-  };
-
-  componentDidMount() {
-    window.addEventListener('resize', this.updateHeight);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateHeight);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps !== this.props) {
-      const height = window.innerHeight;
-
-      const currentPage = 1;
-      const itemsPerPage = Math.floor((height - 250) / 40);
-      const numOfPages = Math.ceil(this.props.data.length / itemsPerPage);
-
-      this.setState({ currentPage, itemsPerPage, numOfPages });
-    }
-  }
-
-  updateHeight = () => {
-    const { height, currentPage } = this.state;
-    const { data } = this.props;
-
-    this.setState({ height: window.innerHeight });
-
-    const itemsPerPage = Math.floor((height - 250) / 40);
-    const numOfPages = Math.ceil(data.length / itemsPerPage);
-    if (itemsPerPage >= 0) {
-      this.setState({ currentPage, itemsPerPage, numOfPages });
-    }
-  };
 }
 
 Table.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
+
+export default withRouter(Table);

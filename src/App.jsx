@@ -5,8 +5,9 @@ import './components/FontAwesomeIcons/FontAwesomeIcon';
 import './App.css';
 
 import Navigation from './components/Navigation/Navigation';
-import Dashboard from './components/Dashboard/Dashboard';
-import Login from './components/Login/Login';
+import Dashboard from './scenes/Dashboard/Dashboard';
+import Login from './scenes/Login/Login';
+import View from './scenes/View/View';
 
 const axios = require('axios');
 
@@ -23,15 +24,75 @@ class App extends Component {
     this.url = 'http://localhost:8080';
   }
 
-  render() {
-    const {
-      data,
+  componentDidMount() {
+    const temp = localStorage.getItem('data');
+    const loadedData = JSON.parse(temp);
+    const username = sessionStorage.getItem('username');
+    if (loadedData) {
+      this.setState({ data: loadedData });
+    }
+
+    if (username) {
+      this.setState({ username });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { data, username } = this.state;
+
+    if (prevState.data !== data) {
+      const temp = JSON.stringify(data);
+      localStorage.setItem('data', temp);
+    }
+
+    if (prevState.username !== username) {
+      sessionStorage.setItem('username', username);
+    }
+  }
+
+  loginUser = async (credentials) => {
+    try {
+      const resp = await axios.post(`${this.url}/login`, credentials);
+      return resp;
+    } catch (err) {
+      console.error(err);
+    }
+
+    return null;
+  };
+
+  setUsername = (username) => this.setState({ username });
+
+  setPassword = (password) => this.setState({ password });
+
+  handleSubmit = async (e) => {
+    const { username, password } = this.state;
+
+    e.preventDefault();
+    const token = await this.loginUser({
       username,
       password,
-      redirect,
-      currentTable,
-      pageDetails,
-    } = this.state;
+    });
+
+    if (token) {
+      sessionStorage.setItem('token', token.data);
+      try {
+        const data = await axios.get(`${this.url}/donors/asc`, {
+          headers: { Authorization: `Bearer ${token.data}` },
+        });
+
+        this.setState({ data: data.data });
+        return true;
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    return false;
+  };
+
+  render() {
+    const { data, username, password, redirect, currentTable } = this.state;
 
     return (
       <div className="App">
@@ -60,6 +121,7 @@ class App extends Component {
                     <Navigation />
                     <Dashboard
                       data={data}
+                      username={username}
                       currentTable={currentTable}
                       handlePagination={this.handlePagination}
                     />
@@ -67,64 +129,16 @@ class App extends Component {
                 </>
               )}
             />
+            <Route
+              exact
+              path-="view/1?id=:id"
+              render={(props) => <View {...props} data={data} />}
+            ></Route>
           </Switch>
         </HashRouter>
       </div>
     );
   }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.data !== this.state.data) {
-      const temp = JSON.stringify(this.state.data);
-      localStorage.setItem('data', temp);
-    }
-  }
-
-  componentDidMount() {
-    const temp = localStorage.getItem('data');
-    const loadedData = JSON.parse(temp);
-    if (loadedData) {
-      this.setState({ data: loadedData });
-    }
-  }
-
-  loginUser = async (credentials) => {
-    try {
-      const resp = await axios.post(`${this.url}/login`, credentials);
-      return resp;
-    } catch (err) {
-      // Handle Error Here
-      console.error(err);
-    }
-  };
-
-  setUsername = (user) => this.setState({ username: user });
-  setPassword = (password) => this.setState({ password: password });
-  handlePagination = (pageDetails) => {
-    console.log('hit');
-    this.setState({ pageDetails });
-  };
-
-  handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = await this.loginUser({
-      username: this.state.username,
-      password: this.state.password,
-    });
-
-    if (token) {
-      sessionStorage.setItem('token', token.data);
-      try {
-        const data = await axios.get(`${this.url}/donors/asc`, {
-          headers: { Authorization: `Bearer ${token.data}` },
-        });
-
-        this.setState({ data: data.data });
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
 }
 
 export default App;
