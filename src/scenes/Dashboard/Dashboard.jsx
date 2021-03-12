@@ -14,7 +14,13 @@ export default class Dashboard extends Component {
   }
 
   render() {
-    const { data, currentTable, handlePagination, username } = this.props;
+    const {
+      data,
+      currentTable,
+      handlePagination,
+      username,
+      setViewedData,
+    } = this.props;
 
     return (
       <div className="dashboard flex--vertical">
@@ -23,6 +29,7 @@ export default class Dashboard extends Component {
           data={data}
           currentTable={currentTable}
           handlePagination={handlePagination}
+          setViewedData={setViewedData}
         />
       </div>
     );

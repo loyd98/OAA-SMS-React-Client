@@ -17,13 +17,14 @@ function createWindow() {
 
   // win.loadFile(path.join(__dirname, ".", "src", "index.html"));
   win.loadURL('http://localhost:3000');
+  win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
   installExtension(REACT_DEVELOPER_TOOLS)
     .then((name) => console.log(`Added Extension:  ${name}`))
     .catch((err) => console.log('An error occurred: ', err));
-  createWindow;
+  createWindow();
 });
 
 app.on('window-all-closed', () => {

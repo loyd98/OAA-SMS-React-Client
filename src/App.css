@@ -5,6 +5,7 @@
   --black: #192a3e;
   --orange: #fa983a;
   --light-grey: #dcdde1;
+  --red: #e55039;
   --dark-grey: #808e9b;
   --border-radius: 0;
   --border-radius-xs: 0.2rem;
@@ -13,6 +14,17 @@
 
 html {
   background-color: var(--grey);
+}
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: var(--dark-grey);
+  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }
 
 *,

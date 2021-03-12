@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes, { string } from 'prop-types';
 import React, { Component } from 'react';
 import './Table.scoped.css';
 
@@ -92,8 +92,13 @@ class Table extends Component {
   };
 
   redirectToView = (id) => {
-    console.log(id);
-    const { history } = this.props;
+    const { history, data, setViewedData } = this.props;
+
+    // Set viewedData state in App
+    const viewedData = data.find((obj) => obj.id == id);
+    setViewedData(viewedData);
+
+    // Redirect to view with ID == id
     history.push(`view/1?id=${id}`);
   };
 
@@ -114,7 +119,10 @@ class Table extends Component {
             <td className="flex--horizontal">
               <div className="table__flags flex--horizontal">
                 {this.tables.map((table) => {
-                  if (table === currentTable) {
+                  if (
+                    table ===
+                    currentTable.charAt(0).toUpperCase() + currentTable.slice(1)
+                  ) {
                     return (
                       <div
                         key={table}

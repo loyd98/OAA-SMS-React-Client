@@ -12,7 +12,7 @@ export default class TableContainer extends Component {
   }
 
   render() {
-    const { data, currentTable, handlePagination } = this.props;
+    const { data, currentTable, handlePagination, setViewedData } = this.props;
 
     return (
       <div className="tableContainer">
@@ -20,6 +20,7 @@ export default class TableContainer extends Component {
           data={data}
           currentTable={currentTable}
           handlePagination={handlePagination}
+          setViewedData={setViewedData}
         />
       </div>
     );

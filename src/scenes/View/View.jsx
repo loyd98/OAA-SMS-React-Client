@@ -4,11 +4,12 @@ import './View.scoped.css';
 
 import Button from '../../components/Buttons/Button/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { withRouter } from 'react-router';
+import Modal from '../../components/Modal/Modal';
 
-const queryString = require('query-string');
 const config = require('../../data.config');
 
-export default class View extends Component {
+class View extends Component {
   constructor(props) {
     super(props);
 
@@ -22,15 +23,22 @@ export default class View extends Component {
     this.setState({ isEditing: !isEditing });
   };
 
-  render() {
-    const { data, location } = this.props;
+  returnToDashboard = () => {
     const { isEditing } = this.state;
-    const parsed = queryString.parse(location.search);
+    const { history, setShowModal } = this.props;
 
-    const datum = data.find((obj) => obj.id == parsed.id);
-    console.log(datum);
+    if (!isEditing) {
+      history.push('/dashboard');
+    } else {
+      setShowModal(true);
+    }
+  };
 
+  render() {
+    const { isEditing } = this.state;
+    const { history, viewedData, showModal, setShowModal } = this.props;
     let button;
+    let inputs;
 
     if (!isEditing) {
       button = (
@@ -43,9 +51,27 @@ export default class View extends Component {
           <FontAwesomeIcon icon="edit" />
         </Button>
       );
+
+      inputs = config.ordering.donors.map((key) => {
+        return (
+          <div key={key.key} className="view__detailContainer">
+            <div className="view__detailTitle">{key.name}</div>
+            <input
+              disabled
+              type="text"
+              defaultValue={
+                viewedData[key.key] === null ? '' : viewedData[key.key]
+              }
+            />
+          </div>
+        );
+      });
     } else {
       button = (
-        <>
+        <div className="flex--horizontal">
+          <Button isTransparent message="Submit" type="rigth">
+            <FontAwesomeIcon icon="share-square" />
+          </Button>
           <Button
             isTransparent
             message="Cancel"
@@ -54,36 +80,74 @@ export default class View extends Component {
           >
             <FontAwesomeIcon icon="times" />
           </Button>
-          <Button isTransparent message="Submit" type="rigth">
-            <FontAwesomeIcon icon="share-square" />
-          </Button>
-        </>
+        </div>
       );
+
+      inputs = config.ordering.donors.map((key) => {
+        return (
+          //TODO
+          <div key={key.key} className="view__detailContainer">
+            <div className="view__detailTitle">{key.name}</div>
+            {key.key === 'createdBy' ||
+            key.key === 'creationDate' ||
+            key.key === 'lastModifiedBy' ||
+            key.key === 'lastModifiedDate' ? (
+              <input
+                disabled
+                type="text"
+                defaultValue={viewedData[key.key] || ''}
+              />
+            ) : (
+              <input
+                type="text"
+                className="view__inputActive"
+                defaultValue={viewedData[key.key] || ''}
+              />
+            )}
+          </div>
+        );
+      });
     }
 
     return (
       <>
-        <Navigation></Navigation>
+        {showModal && (
+          <Modal
+            title="Discard your changes?"
+            message="The changes in the form have not been submitted yet. Would you like to discard them and return to the Dashboard page, or cancel and return to the Editing page."
+            leftBtnName="Cancel"
+            rightBtnName="Discard"
+            exitOnClick={() => setShowModal(false)}
+            leftBtnOnClick={() => setShowModal(false)}
+            rightBtnOnClick={() => history.push('/dashboard')}
+          />
+        )}
+        <Navigation />
         <div className="view flex--horizontal">
           <div className="view__left">
             <div className="view__titlebar flex--horizontal">
               <p>Details</p>
               {button}
             </div>
-            <div className="view__details">
-              {config.ordering.donors.map((key) => {
-                return (
-                  <div className="view__detailContainer">
-                    <div className="view__detailTitle">{key.name}</div>
-                    <input type="text" placeholder={datum[key.key]} />
-                  </div>
-                );
-              })}
+            <div className="view__details">{inputs}</div>
+          </div>
+          <div className="view__right">
+            <div className="view__titlebar flex--horizontal">
+              <p>Details</p>
+              <Button
+                isTransparent
+                message="Return to Dashboard"
+                type="right"
+                onClick={() => this.returnToDashboard(isEditing)}
+              >
+                <FontAwesomeIcon icon="arrow-left" />
+              </Button>
             </div>
           </div>
-          <div className="view__right"></div>
         </div>
       </>
     );
   }
 }
+
+export default withRouter(View);

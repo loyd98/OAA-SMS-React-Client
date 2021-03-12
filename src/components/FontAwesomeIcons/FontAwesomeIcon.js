@@ -17,6 +17,8 @@ import {
   faArrowRight,
   faEdit,
   faShareSquare,
+  faExclamation,
+  faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -37,4 +39,6 @@ library.add(
   faArrowRight,
   faEdit,
   faShareSquare,
+  faExclamation,
+  faExclamationTriangle,
 );

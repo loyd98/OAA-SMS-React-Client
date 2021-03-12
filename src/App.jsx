@@ -8,6 +8,7 @@ import Navigation from './components/Navigation/Navigation';
 import Dashboard from './scenes/Dashboard/Dashboard';
 import Login from './scenes/Login/Login';
 import View from './scenes/View/View';
+import Modal from './components/Modal/Modal';
 
 const axios = require('axios');
 
@@ -19,26 +20,42 @@ class App extends Component {
       username: '',
       password: '',
       redirect: null,
-      currentTable: 'Donors',
+      currentTable: '',
+      viewedData: {},
+      showModal: false,
     };
     this.url = 'http://localhost:8080';
   }
 
   componentDidMount() {
-    const temp = localStorage.getItem('data');
-    const loadedData = JSON.parse(temp);
-    const username = sessionStorage.getItem('username');
-    if (loadedData) {
-      this.setState({ data: loadedData });
+    const data = JSON.parse(localStorage.getItem('data'));
+    if (data) {
+      this.setState({ data });
     }
 
+    const username = sessionStorage.getItem('username');
     if (username) {
       this.setState({ username });
+    }
+
+    const currentTable = sessionStorage.getItem('currentTable');
+    if (currentTable) {
+      this.setState({ currentTable });
+    }
+
+    const viewedData = JSON.parse(sessionStorage.getItem('viewedData'));
+    if (viewedData) {
+      this.setState({ viewedData });
+    }
+
+    const showModal = sessionStorage.getItem('showModal');
+    if (showModal) {
+      this.setState({ showModal });
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { data, username } = this.state;
+    const { data, username, currentTable, viewedData, showModal } = this.state;
 
     if (prevState.data !== data) {
       const temp = JSON.stringify(data);
@@ -47,6 +64,19 @@ class App extends Component {
 
     if (prevState.username !== username) {
       sessionStorage.setItem('username', username);
+    }
+
+    if (prevState.currentTable !== currentTable) {
+      sessionStorage.setItem('currentTable', currentTable);
+    }
+
+    if (prevState.viewedData !== viewedData) {
+      const temp = JSON.stringify(viewedData);
+      sessionStorage.setItem('viewedData', temp);
+    }
+
+    if (prevState.showModal !== showModal) {
+      sessionStorage.setItem('showModal', showModal);
     }
   }
 
@@ -65,6 +95,10 @@ class App extends Component {
 
   setPassword = (password) => this.setState({ password });
 
+  setViewedData = (viewedData) => this.setState({ viewedData });
+
+  setShowModal = (showModal) => this.setState({ showModal });
+
   handleSubmit = async (e) => {
     const { username, password } = this.state;
 
@@ -81,7 +115,7 @@ class App extends Component {
           headers: { Authorization: `Bearer ${token.data}` },
         });
 
-        this.setState({ data: data.data });
+        this.setState({ data: data.data, currentTable: 'donors' });
         return true;
       } catch (err) {
         console.log(err);
@@ -92,7 +126,15 @@ class App extends Component {
   };
 
   render() {
-    const { data, username, password, redirect, currentTable } = this.state;
+    const {
+      data,
+      username,
+      password,
+      redirect,
+      currentTable,
+      viewedData,
+      showModal,
+    } = this.state;
 
     return (
       <div className="App">
@@ -124,6 +166,7 @@ class App extends Component {
                       username={username}
                       currentTable={currentTable}
                       handlePagination={this.handlePagination}
+                      setViewedData={this.setViewedData}
                     />
                   </>
                 </>
@@ -132,8 +175,17 @@ class App extends Component {
             <Route
               exact
               path-="view/1?id=:id"
-              render={(props) => <View {...props} data={data} />}
-            ></Route>
+              render={(props) => (
+                <View
+                  {...props}
+                  data={data}
+                  currentTable={currentTable}
+                  viewedData={viewedData}
+                  showModal={showModal}
+                  setShowModal={this.setShowModal}
+                />
+              )}
+            />
           </Switch>
         </HashRouter>
       </div>

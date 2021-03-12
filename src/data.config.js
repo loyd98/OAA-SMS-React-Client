@@ -1,8 +1,10 @@
 module.exports = {
   ordering: {
     donors: [
+      // width refers to column width
       // { key: '#', name: '#', width: '20px' },
       { key: 'id', name: 'Donor ID', width: '50px' },
+      { key: 'salutation', name: 'Salutation', width: '50px' },
       { key: 'donorName', name: 'Donor Name', width: '70px' },
       { key: 'accountNumber', name: 'Account Number', width: '70px' },
       { key: 'accountName', name: 'Account Name', width: '70px' },
@@ -19,7 +21,10 @@ module.exports = {
       { key: 'faxNumber', name: 'Fax No.', width: '100px' },
       { key: 'companyAddress', name: 'Company Address', width: '100px' },
       { key: 'companyTIN', name: 'Company TIN', width: '100px' },
-      { key: 'notes', name: 'Notes', width: '100px' },
+      { key: 'createdBy', name: 'Created By', width: '100px' },
+      { key: 'creationDate', name: 'Creation Date', width: '100px' },
+      { key: 'lastModifiedBy', name: 'Last Modified By', width: '100px' },
+      { key: 'lastModifiedDate', name: 'Last Modified Date', width: '100px' },
     ],
   },
   tables: ['Donors', 'Scholars', 'Scholarships', 'MOAs', 'Documents'],
