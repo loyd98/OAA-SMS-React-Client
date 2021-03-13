@@ -9,6 +9,7 @@ import Dashboard from './scenes/Dashboard/Dashboard';
 import Login from './scenes/Login/Login';
 import View from './scenes/View/View';
 import Modal from './components/Modal/Modal';
+import Add from './scenes/Add/Add';
 
 const axios = require('axios');
 
@@ -23,6 +24,7 @@ class App extends Component {
       currentTable: '',
       viewedData: {},
       showModal: false,
+      showAdd: false,
     };
     this.url = 'http://localhost:8080';
   }
@@ -100,6 +102,8 @@ class App extends Component {
 
   setShowModal = (showModal) => this.setState({ showModal });
 
+  setShowAdd = (showAdd) => this.setState({ showAdd });
+
   handleSubmit = async (e) => {
     const { username, password } = this.state;
 
@@ -135,11 +139,17 @@ class App extends Component {
       currentTable,
       viewedData,
       showModal,
+      showAdd,
     } = this.state;
+
+    console.log(currentTable);
 
     return (
       <div className="App">
         <HashRouter>
+          {showAdd && (
+            <Add currentTable={currentTable} setShowAdd={this.setShowAdd} />
+          )}
           <Switch>
             <Route
               exact
@@ -168,6 +178,7 @@ class App extends Component {
                       currentTable={currentTable}
                       handlePagination={this.handlePagination}
                       setViewedData={this.setViewedData}
+                      setShowAdd={this.setShowAdd}
                     />
                   </>
                 </>

@@ -36,7 +36,13 @@ class View extends Component {
 
   render() {
     const { isEditing } = this.state;
-    const { history, viewedData, showModal, setShowModal } = this.props;
+    const {
+      history,
+      viewedData,
+      showModal,
+      setShowModal,
+      currentTable,
+    } = this.props;
     let button;
     let inputs;
 
@@ -52,7 +58,7 @@ class View extends Component {
         </Button>
       );
 
-      inputs = config.ordering.donors.map((key) => {
+      inputs = config.ordering[currentTable].map((key) => {
         return (
           <div key={key.key} className="view__detailContainer">
             <div className="view__detailTitle">{key.name}</div>
@@ -83,7 +89,7 @@ class View extends Component {
         </div>
       );
 
-      inputs = config.ordering.donors.map((key) => {
+      inputs = config.ordering[currentTable].map((key) => {
         return (
           //TODO
           <div key={key.key} className="view__detailContainer">
@@ -132,7 +138,7 @@ class View extends Component {
               <p>Details</p>
               {button}
             </div>
-            <div className="view__details">{inputs}</div>
+            <form className="view__details">{inputs}</form>
           </div>
           <div className="view__right">
             <div className="view__titlebar flex--horizontal">

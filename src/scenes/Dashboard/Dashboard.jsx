@@ -20,6 +20,7 @@ export default class Dashboard extends Component {
       handlePagination,
       username,
       setViewedData,
+      setShowAdd,
     } = this.props;
 
     return (
@@ -30,6 +31,7 @@ export default class Dashboard extends Component {
           currentTable={currentTable}
           handlePagination={handlePagination}
           setViewedData={setViewedData}
+          setShowAdd={setShowAdd}
         />
       </div>
     );

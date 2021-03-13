@@ -110,6 +110,12 @@ class Table extends Component {
     history.push(`view/1?id=${id}`);
   };
 
+  handleAddClick = () => {
+    const { setShowAdd } = this.props;
+
+    setShowAdd(true);
+  };
+
   render() {
     const { currentPage, numOfPages, itemsPerPage, isRedirect } = this.state;
     const { data, currentTable } = this.props;
@@ -181,7 +187,12 @@ class Table extends Component {
                 </Button>
               </div>
               <div className="flex--horizontal">
-                <Button isTransparent message="Add Entry" type="right">
+                <Button
+                  isTransparent
+                  message="Add Entry"
+                  type="right"
+                  onClick={this.handleAddClick}
+                >
                   <FontAwesomeIcon icon="plus" />
                 </Button>
               </div>
