@@ -94,7 +94,7 @@ class Table extends Component {
 
     const itemsPerPage = Math.floor((height - 250) / 40);
     const numOfPages = Math.ceil(data.length / itemsPerPage);
-    if (itemsPerPage >= 0) {
+    if (itemsPerPage > 0) {
       this.setState({ currentPage, itemsPerPage, numOfPages });
     }
   };
