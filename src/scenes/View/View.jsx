@@ -114,7 +114,7 @@ class View extends Component {
         {showModal && (
           <Modal
             title="Discard your changes?"
-            message="The changes in the form have not been submitted yet. Would you like to discard them and return to the Dashboard page, or cancel and return to the Editing page."
+            message="The changes in the form have not been submitted yet. Would you like to discard them and return to the Dashboard page, or cancel and return to the Editing page?"
             leftBtnName="Cancel"
             rightBtnName="Discard"
             exitOnClick={() => setShowModal(false)}

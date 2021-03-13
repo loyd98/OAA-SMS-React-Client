@@ -53,6 +53,14 @@ class Table extends Component {
     window.removeEventListener('resize', this.updateHeight);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { numOfPages, currentPage } = this.state;
+
+    if (prevState.numOfPages !== numOfPages && currentPage > numOfPages) {
+      this.setState({ currentPage: numOfPages });
+    }
+  }
+
   handleLeftClick = () => {
     this.setState((prevState) => ({
       currentPage: prevState.currentPage > 1 ? prevState.currentPage - 1 : 1,
