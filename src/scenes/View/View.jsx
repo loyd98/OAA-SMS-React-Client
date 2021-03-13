@@ -119,7 +119,10 @@ class View extends Component {
             rightBtnName="Discard"
             exitOnClick={() => setShowModal(false)}
             leftBtnOnClick={() => setShowModal(false)}
-            rightBtnOnClick={() => history.push('/dashboard')}
+            rightBtnOnClick={() => {
+              setShowModal(false);
+              history.push('/dashboard');
+            }}
           />
         )}
         <Navigation />
@@ -133,12 +136,12 @@ class View extends Component {
           </div>
           <div className="view__right">
             <div className="view__titlebar flex--horizontal">
-              <p>Details</p>
+              <p>Tables</p>
               <Button
                 isTransparent
                 message="Return to Dashboard"
                 type="right"
-                onClick={() => this.returnToDashboard(isEditing)}
+                onClick={() => this.returnToDashboard()}
               >
                 <FontAwesomeIcon icon="arrow-left" />
               </Button>

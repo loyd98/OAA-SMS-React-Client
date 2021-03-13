@@ -48,11 +48,11 @@ class App extends Component {
       this.setState({ viewedData });
     }
 
-    // const showModal = sessionStorage.getItem('showModal');
-    // if (showModal) {
-    //   console.log(showModal);
-    //   this.setState({ showModal });
-    // }
+    const showModal = sessionStorage.getItem('showModal');
+    if (showModal) {
+      console.log(showModal);
+      this.setState({ showModal: showModal === 'true' });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -76,9 +76,9 @@ class App extends Component {
       sessionStorage.setItem('viewedData', temp);
     }
 
-    // if (prevState.showModal !== showModal) {
-    //   sessionStorage.setItem('showModal', showModal);
-    // }
+    if (prevState.showModal !== showModal) {
+      sessionStorage.setItem('showModal', showModal);
+    }
   }
 
   loginUser = async (credentials) => {
