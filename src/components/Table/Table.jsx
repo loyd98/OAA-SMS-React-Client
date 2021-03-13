@@ -150,11 +150,8 @@ class Table extends Component {
               </div>
             </td>
             <td className="table__pagination flex--horizontal">
-              <Button isTransparent>
-                <FontAwesomeIcon
-                  icon="arrow-left"
-                  onClick={this.handleLeftClick}
-                />
+              <Button isTransparent onClick={this.handleLeftClick}>
+                <FontAwesomeIcon icon="arrow-left" />
               </Button>
               <span>
                 <sup>{currentPage}</sup>&frasl;<sub>{numOfPages}</sub>
