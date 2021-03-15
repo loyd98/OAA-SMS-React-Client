@@ -25,7 +25,7 @@ export default class Button extends Component {
 
   render() {
     const { isClicked, isHidden } = this.state;
-    const { children, isTransparent, message, type, onClick } = this.props;
+    const { children, isTransparent, message, type, onClick, id } = this.props;
     const transparent = isTransparent
       ? `button flex--vertical transparent`
       : 'button flex--vertical';
@@ -41,6 +41,7 @@ export default class Button extends Component {
     return (
       <React.Fragment>
         <button
+          data-id={id}
           type="button"
           className={`${transparent} ${clicked}`}
           onMouseDown={this.toggleBtnActive}
@@ -50,9 +51,16 @@ export default class Button extends Component {
           onClick={onClick}
         >
           {children}
-          <div className={`caption flex--vertical ${hidden} ${position}`}>
-            <span className="triangle">ab</span>
-            <div className="caption__content flex--horizontal">{message}</div>
+          <div
+            data-id={id}
+            className={`caption flex--vertical ${hidden} ${position}`}
+          >
+            <span data-id={id} className="triangle">
+              ab
+            </span>
+            <div data-id={id} className="caption__content flex--horizontal">
+              {message}
+            </div>
           </div>
         </button>
       </React.Fragment>

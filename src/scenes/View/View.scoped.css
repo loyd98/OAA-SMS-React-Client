@@ -73,7 +73,7 @@
     font-weight: 500;
 }
 
-.view__detailContainer .view__inputActive {
+.view__detailContainer input:enabled {
     border-color: var(--orange);
 }
 

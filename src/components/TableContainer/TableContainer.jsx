@@ -16,8 +16,10 @@ export default class TableContainer extends Component {
       data,
       currentTable,
       handlePagination,
+      handleDelete,
       setViewedData,
       setShowAdd,
+      setEditForm,
     } = this.props;
 
     return (
@@ -26,8 +28,10 @@ export default class TableContainer extends Component {
           data={data}
           currentTable={currentTable}
           handlePagination={handlePagination}
+          handleDelete={handleDelete}
           setViewedData={setViewedData}
           setShowAdd={setShowAdd}
+          setEditForm={setEditForm}
         />
       </div>
     );

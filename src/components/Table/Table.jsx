@@ -15,7 +15,7 @@ class Table extends Component {
 
     this.fields = config.ordering.donors;
     this.tables = config.tables;
-    this.endColNum = 6;
+    this.endColNum = 7;
     this.state = {
       height: 0,
       currentPage: 1,
@@ -28,6 +28,7 @@ class Table extends Component {
   componentDidMount() {
     const temp = sessionStorage.getItem('pageDetails');
     const loadedData = JSON.parse(temp);
+
     if (loadedData) {
       const { currentPage, numOfPages, itemsPerPage } = loadedData;
       this.setState({ currentPage, numOfPages, itemsPerPage });
@@ -35,7 +36,13 @@ class Table extends Component {
       const height = window.innerHeight;
       const currentPage = 1;
       const itemsPerPage = Math.floor((height - 250) / 40);
-      const numOfPages = Math.ceil(this.props.data.length / itemsPerPage);
+      let numOfPages;
+
+      if (this.props.data.length === 0) {
+        numOfPages = 1;
+      } else {
+        numOfPages = Math.ceil(this.props.data.length / itemsPerPage);
+      }
 
       this.setState({ currentPage, itemsPerPage, numOfPages });
       const pageDetails = JSON.stringify({
@@ -54,11 +61,18 @@ class Table extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { numOfPages, currentPage } = this.state;
-
-    if (prevState.numOfPages !== numOfPages && currentPage > numOfPages) {
-      this.setState({ currentPage: numOfPages });
+    if (prevProps.data !== this.props.data) {
+      const height = window.innerHeight;
+      const itemsPerPage = Math.floor((height - 250) / 40);
+      const numOfPages = Math.ceil(this.props.data.length / itemsPerPage);
+      this.setState({ numOfPages });
     }
+
+    // CHECK
+    // const { numOfPages, currentPage } = this.state;
+    // if (prevState.numOfPages !== numOfPages && currentPage > numOfPages) {
+    //   this.setState({ currentPage: numOfPages });
+    // }
   }
 
   handleLeftClick = () => {
@@ -100,11 +114,30 @@ class Table extends Component {
   };
 
   redirectToView = (id) => {
-    const { history, data, setViewedData } = this.props;
+    console.log(this.props);
+    const { history, data, setViewedData, setEditForm } = this.props;
 
     // Set viewedData state in App
     const viewedData = data.find((obj) => obj.id == id);
     setViewedData(viewedData);
+
+    // Filter the creations details from the editForm data
+    const filteredKeys = Object.keys(viewedData).filter((key) => {
+      if (
+        key !== 'createdBy' &&
+        key !== 'creationDate' &&
+        key !== 'lastModifiedBy' &&
+        key !== 'lastModifiedDate'
+      ) {
+        return key;
+      }
+    });
+
+    const editForm = {};
+    for (let key of filteredKeys) {
+      editForm[key] = viewedData[key];
+    }
+    setEditForm(editForm);
 
     // Redirect to view with ID == id
     history.push(`view/1?id=${id}`);
@@ -118,7 +151,7 @@ class Table extends Component {
 
   render() {
     const { currentPage, numOfPages, itemsPerPage, isRedirect } = this.state;
-    const { data, currentTable } = this.props;
+    const { data, currentTable, handleDelete } = this.props;
 
     const items = this.sliceItems(data, itemsPerPage, currentPage);
 
@@ -180,7 +213,7 @@ class Table extends Component {
                 </Button>
                 <Dropdown
                   title="Dropdown"
-                  list={['#', 'Donor Name', 'Email Address Address Address']}
+                  list={['#', 'Donor Name', 'Email Address']}
                 />
                 <Button isTransparent message="Sort" type="center">
                   <FontAwesomeIcon icon="sort" />
@@ -211,7 +244,7 @@ class Table extends Component {
         </thead>
         <tbody>
           {items.map((row, i) => (
-            <tr data-id={row.id} key={row.id}>
+            <tr key={row.id}>
               {this.fields.slice(0, this.endColNum).map((col) => {
                 if (col.key === '#') {
                   return (
@@ -237,8 +270,14 @@ class Table extends Component {
                   >
                     <FontAwesomeIcon icon="border-all" />
                   </Button>
-                  <Button isTransparent={false} message="Delete" type="right">
-                    <FontAwesomeIcon icon="times" />
+                  <Button
+                    id={row.id}
+                    isTransparent={false}
+                    message="Delete"
+                    type="right"
+                    onClick={(e) => handleDelete(e)}
+                  >
+                    <FontAwesomeIcon data-id={row.id} icon="times" />
                   </Button>
                 </div>
               </td>

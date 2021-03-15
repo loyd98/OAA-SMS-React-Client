@@ -18,9 +18,11 @@ export default class Dashboard extends Component {
       data,
       currentTable,
       handlePagination,
+      handleDelete,
       username,
       setViewedData,
       setShowAdd,
+      setEditForm,
     } = this.props;
 
     return (
@@ -30,8 +32,10 @@ export default class Dashboard extends Component {
           data={data}
           currentTable={currentTable}
           handlePagination={handlePagination}
+          handleDelete={handleDelete}
           setViewedData={setViewedData}
           setShowAdd={setShowAdd}
+          setEditForm={setEditForm}
         />
       </div>
     );

@@ -7,8 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { withRouter } from 'react-router';
 import Modal from '../../components/Modal/Modal';
 
-const config = require('../../data.config');
-
 class View extends Component {
   constructor(props) {
     super(props);
@@ -21,6 +19,33 @@ class View extends Component {
   toggleClick = () => {
     const { isEditing } = this.state;
     this.setState({ isEditing: !isEditing });
+  };
+
+  handleCancel = () => {
+    const { isEditing } = this.state;
+    this.setState({ isEditing: !isEditing });
+
+    const { setEditForm, viewedData } = this.props;
+    const filteredKeys = Object.keys(viewedData).filter((key) => {
+      if (
+        key !== 'createdBy' &&
+        key !== 'creationDate' &&
+        key !== 'lastModifiedBy' &&
+        key !== 'lastModifiedDate'
+      ) {
+        return key;
+      }
+    });
+
+    const editForm = {};
+    for (let key of filteredKeys) {
+      editForm[key] = viewedData[key];
+    }
+    setEditForm(editForm);
+  };
+
+  handleClick = () => {
+    this.forceUpdate();
   };
 
   returnToDashboard = () => {
@@ -41,78 +66,62 @@ class View extends Component {
       viewedData,
       showModal,
       setShowModal,
+      setEditFormField,
       currentTable,
+      config,
+      handleEditFormSubmit,
+      editForm,
     } = this.props;
     let button;
     let inputs;
+
+    inputs = config.ordering[currentTable].map((key) => {
+      return (
+        <div key={key.key} className="view__detailContainer">
+          <div className="view__detailTitle">{key.name}</div>
+          <input
+            disabled={!isEditing}
+            name={key.key}
+            type="text"
+            value={editForm[key.key] == null ? '' : editForm[key.key]}
+            onChange={(e) => setEditFormField(e.target.name, e.target.value)}
+          />
+        </div>
+      );
+    });
 
     if (!isEditing) {
       button = (
         <Button
           isTransparent
           message="Edit"
-          type="rigth"
+          type="right"
           onClick={this.toggleClick}
         >
           <FontAwesomeIcon icon="edit" />
         </Button>
       );
-
-      inputs = config.ordering[currentTable].map((key) => {
-        return (
-          <div key={key.key} className="view__detailContainer">
-            <div className="view__detailTitle">{key.name}</div>
-            <input
-              disabled
-              type="text"
-              defaultValue={
-                viewedData[key.key] === null ? '' : viewedData[key.key]
-              }
-            />
-          </div>
-        );
-      });
     } else {
       button = (
         <div className="flex--horizontal">
-          <Button isTransparent message="Submit" type="rigth">
+          <Button
+            isTransparent
+            message="Submit"
+            type="rigth"
+            onClick={(e) => handleEditFormSubmit(e)}
+          >
             <FontAwesomeIcon icon="share-square" />
           </Button>
           <Button
             isTransparent
             message="Cancel"
-            type="rigth"
-            onClick={this.toggleClick}
+            type="right"
+            onClick={this.handleCancel}
           >
             <FontAwesomeIcon icon="times" />
           </Button>
         </div>
       );
-
-      inputs = config.ordering[currentTable].map((key) => {
-        return (
-          //TODO
-          <div key={key.key} className="view__detailContainer">
-            <div className="view__detailTitle">{key.name}</div>
-            {key.key === 'createdBy' ||
-            key.key === 'creationDate' ||
-            key.key === 'lastModifiedBy' ||
-            key.key === 'lastModifiedDate' ? (
-              <input
-                disabled
-                type="text"
-                defaultValue={viewedData[key.key] || ''}
-              />
-            ) : (
-              <input
-                type="text"
-                className="view__inputActive"
-                defaultValue={viewedData[key.key] || ''}
-              />
-            )}
-          </div>
-        );
-      });
     }
 
     return (
@@ -120,7 +129,7 @@ class View extends Component {
         {showModal && (
           <Modal
             title="Discard your changes?"
-            message="The changes in the form have not been submitted yet. Would you like to discard them and return to the Dashboard page, or cancel and return to the Editing page?"
+            message="The changes in the form have not been submitted yet. Would you like to discard them and return to the Dashboard page, or cancel and return to the form?"
             leftBtnName="Cancel"
             rightBtnName="Discard"
             exitOnClick={() => setShowModal(false)}

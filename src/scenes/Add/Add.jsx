@@ -5,8 +5,6 @@ import './Add.scoped.css';
 import Button from '../../components/Buttons/Button/Button';
 import { withRouter } from 'react-router';
 
-const config = require('../../data.config');
-
 class Add extends Component {
   constructor(props) {
     super(props);
@@ -14,8 +12,23 @@ class Add extends Component {
     this.state = {};
   }
 
+  componentDidMount = () => {};
+
+  handleSubmit = (setShowAdd, handleAddFormSubmit) => {
+    setShowAdd(false);
+    handleAddFormSubmit();
+  };
+
   render() {
-    const { currentTable, setShowAdd } = this.props;
+    const {
+      currentTable,
+      setShowAdd,
+      setAddFormField,
+      config,
+      handleAddFormSubmit,
+    } = this.props;
+
+    console.log(this.props);
 
     return (
       <div className="add__background">
@@ -24,14 +37,32 @@ class Add extends Component {
             Return to Dashboard
           </Button>
           {config.ordering[currentTable].map((key) => {
+            if (
+              key.key === 'createdBy' ||
+              key.key === 'creationDate' ||
+              key.key === 'lastModifiedBy' ||
+              key.key === 'lastModifiedDate'
+            ) {
+              return null;
+            }
             return (
               <div key={key.key} className="view__detailContainer">
                 <div className="view__detailTitle">{key.name}</div>
-                <input type="text" />
+                <input
+                  name={key.key}
+                  type="text"
+                  value={this.state[key.key]}
+                  onChange={(e) =>
+                    setAddFormField(e.target.name, e.target.value)
+                  }
+                />
               </div>
             );
           })}
-          <Button isTransparent onClick={() => setShowAdd(false)}>
+          <Button
+            isTransparent
+            onClick={() => this.handleSubmit(setShowAdd, handleAddFormSubmit)}
+          >
             Submit
           </Button>
         </form>

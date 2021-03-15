@@ -27,5 +27,12 @@ module.exports = {
       { key: 'lastModifiedDate', name: 'Last Modified Date', width: '100px' },
     ],
   },
-  tables: ['Donors', 'Scholars', 'Scholarships', 'MOAs', 'Documents'],
+  tables: [
+    'Donors',
+    'Scholars',
+    'Scholarships',
+    'MOAs',
+    'Documents',
+    'Donations',
+  ],
 };
