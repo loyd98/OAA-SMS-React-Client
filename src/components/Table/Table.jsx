@@ -115,7 +115,15 @@ class Table extends Component {
 
   redirectToView = (id) => {
     console.log(this.props);
-    const { history, data, setViewedData, setEditForm } = this.props;
+    const {
+      history,
+      data,
+      setViewedData,
+      setEditForm,
+      setCurrentId,
+    } = this.props;
+
+    setCurrentId(id);
 
     // Set viewedData state in App
     const viewedData = data.find((obj) => obj.id == id);

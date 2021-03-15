@@ -27,9 +27,12 @@ class App extends Component {
       viewedData: {},
       showModal: false,
       showAdd: false,
+      currentId: null,
       addForm: {},
       editForm: {},
       config: config,
+      searchQuery: '',
+      searchTimeout: 0,
     };
     this.url = 'http://localhost:8080';
   }
@@ -61,6 +64,11 @@ class App extends Component {
     if (showModal) {
       this.setState({ showModal: showModal === 'true' });
     }
+
+    const currentId = sessionStorage.getItem('currentId');
+    if (currentId) {
+      this.setState({ currentId });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -71,6 +79,7 @@ class App extends Component {
       viewedData,
       showModal,
       config,
+      currentId,
     } = this.state;
 
     if (prevState.data !== data) {
@@ -102,6 +111,10 @@ class App extends Component {
 
     if (prevState.showModal !== showModal) {
       sessionStorage.setItem('showModal', showModal);
+    }
+
+    if (prevState.currentId !== currentId) {
+      sessionStorage.setItem('currentId', currentId);
     }
   }
 
@@ -163,6 +176,8 @@ class App extends Component {
 
   setConfig = (config) => this.setState({ config });
 
+  setCurrentId = (currentId) => this.setState({ currentId });
+
   setEditFormField = (field, value) => {
     this.setState((prevState) => ({
       editForm: { ...prevState.editForm, [field]: value },
@@ -218,16 +233,18 @@ class App extends Component {
       headers: { Authorization: `Bearer ${token}` },
     };
 
-    console.log(token);
     axios
       .patch(`${this.url}/donor/update`, editForm, options)
-      .then((res) => console.log(res))
+      .then((res) => {
+        localStorage.clear();
+        this.setState({ viewedData: res.data });
+        this.fetchData(token);
+      })
       .catch((err) => console.log(err));
   };
 
   handleDelete = (e) => {
     const token = sessionStorage.getItem('token');
-
     const id = e.target.dataset.id + '';
 
     axios
@@ -239,9 +256,34 @@ class App extends Component {
         },
       })
       .then((res) => {
-        this.setState({ data: res.data });
+        // this.setState({ viewedData: res.data });
+        this.fetchData(token);
       })
       .catch((err) => console.log(err.response));
+  };
+
+  handleSearch = (keyword) => {
+    const token = sessionStorage.getItem('token');
+    const { searchTimeout } = this.state;
+    const options = {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { keyword },
+    };
+
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    this.setState({
+      searchTimeout: setTimeout(() => {
+        axios
+          .get(`${this.url}/donor/search`, options)
+          .then((res) => {
+            this.setState({ data: res.data });
+          })
+          .catch((err) => console.log(err));
+      }, 500),
+    });
   };
 
   render() {
@@ -301,6 +343,9 @@ class App extends Component {
                       setViewedData={this.setViewedData}
                       setShowAdd={this.setShowAdd}
                       setEditForm={this.setEditForm}
+                      setCurrentId={this.setCurrentId}
+                      searchQuery={this.searchQuery}
+                      handleSearch={this.handleSearch}
                     />
                   </>
                 </>

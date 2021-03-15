@@ -16,16 +16,16 @@ class View extends Component {
     };
   }
 
-  toggleClick = () => {
+  handleEditToggle = () => {
     const { isEditing } = this.state;
     this.setState({ isEditing: !isEditing });
   };
 
-  handleCancel = () => {
+  handleCancelClick = () => {
     const { isEditing } = this.state;
+    const { setEditForm, viewedData } = this.props;
     this.setState({ isEditing: !isEditing });
 
-    const { setEditForm, viewedData } = this.props;
     const filteredKeys = Object.keys(viewedData).filter((key) => {
       if (
         key !== 'createdBy' &&
@@ -41,11 +41,9 @@ class View extends Component {
     for (let key of filteredKeys) {
       editForm[key] = viewedData[key];
     }
-    setEditForm(editForm);
-  };
 
-  handleClick = () => {
-    this.forceUpdate();
+    setEditForm(editForm);
+    this.setState({ isEditing: !isEditing });
   };
 
   returnToDashboard = () => {
@@ -59,17 +57,22 @@ class View extends Component {
     }
   };
 
+  handleSubmitClick = (e) => {
+    const { handleEditFormSubmit } = this.props;
+
+    handleEditFormSubmit(e);
+    this.handleEditToggle();
+  };
+
   render() {
     const { isEditing } = this.state;
     const {
       history,
-      viewedData,
       showModal,
       setShowModal,
       setEditFormField,
       currentTable,
       config,
-      handleEditFormSubmit,
       editForm,
     } = this.props;
     let button;
@@ -96,7 +99,7 @@ class View extends Component {
           isTransparent
           message="Edit"
           type="right"
-          onClick={this.toggleClick}
+          onClick={this.handleEditToggle}
         >
           <FontAwesomeIcon icon="edit" />
         </Button>
@@ -108,7 +111,7 @@ class View extends Component {
             isTransparent
             message="Submit"
             type="rigth"
-            onClick={(e) => handleEditFormSubmit(e)}
+            onClick={(e) => this.handleSubmitClick(e)}
           >
             <FontAwesomeIcon icon="share-square" />
           </Button>
@@ -116,7 +119,7 @@ class View extends Component {
             isTransparent
             message="Cancel"
             type="right"
-            onClick={this.handleCancel}
+            onClick={this.handleCancelClick}
           >
             <FontAwesomeIcon icon="times" />
           </Button>

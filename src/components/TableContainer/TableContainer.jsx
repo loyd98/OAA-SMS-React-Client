@@ -20,6 +20,7 @@ export default class TableContainer extends Component {
       setViewedData,
       setShowAdd,
       setEditForm,
+      setCurrentId,
     } = this.props;
 
     return (
@@ -32,6 +33,7 @@ export default class TableContainer extends Component {
           setViewedData={setViewedData}
           setShowAdd={setShowAdd}
           setEditForm={setEditForm}
+          setCurrentId={setCurrentId}
         />
       </div>
     );

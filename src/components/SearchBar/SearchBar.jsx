@@ -10,12 +10,15 @@ export default class SearchBar extends Component {
   }
 
   render() {
-    const { username } = this.props;
+    const { username, searchQuery, handleSearch } = this.props;
 
     return (
       <div className="search flex--horizontal">
         <div className="search__container flex--horizontal">
-          <input />
+          <input
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
           <button type="button">
             <FontAwesomeIcon icon="search" />
           </button>

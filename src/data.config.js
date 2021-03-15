@@ -35,4 +35,26 @@ module.exports = {
     'Documents',
     'Donations',
   ],
+  dropdowns: {
+    donors: [
+      {
+        key: 'id',
+        name: 'Donor ID',
+        routeAsc: 'donor/asc',
+        routeDesc: 'donor/desc',
+      },
+      {
+        key: 'donorName',
+        name: 'Donor Name',
+        routeAsc: 'donor/name/asc',
+        routeDesc: 'donor/name/desc',
+      },
+      {
+        key: 'accountName',
+        name: 'Account Name',
+        routeAsc: 'donor/account/asc',
+        routeDesc: 'donor/account/desc',
+      },
+    ],
+  },
 };

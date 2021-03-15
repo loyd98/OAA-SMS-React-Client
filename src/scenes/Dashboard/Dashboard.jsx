@@ -23,11 +23,18 @@ export default class Dashboard extends Component {
       setViewedData,
       setShowAdd,
       setEditForm,
+      setCurrentId,
+      searchQuery,
+      handleSearch,
     } = this.props;
 
     return (
       <div className="dashboard flex--vertical">
-        <SearchBar username={username} />
+        <SearchBar
+          username={username}
+          searchQuery={searchQuery}
+          handleSearch={handleSearch}
+        />
         <TableContainer
           data={data}
           currentTable={currentTable}
@@ -36,6 +43,7 @@ export default class Dashboard extends Component {
           setViewedData={setViewedData}
           setShowAdd={setShowAdd}
           setEditForm={setEditForm}
+          setCurrentId={setCurrentId}
         />
       </div>
     );
