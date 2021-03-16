@@ -16,6 +16,8 @@ class View extends Component {
     };
   }
 
+  setShowModal = (showModal) => this.setState({ showModal });
+
   handleEditToggle = () => {
     const { isEditing } = this.state;
     this.setState({ isEditing: !isEditing });
@@ -24,7 +26,7 @@ class View extends Component {
   handleCancelClick = () => {
     const { isEditing } = this.state;
     const { setEditForm, viewedData } = this.props;
-    this.setState({ isEditing: !isEditing });
+    this.setState({ isEditing: !isEditing, showModal: false });
 
     const filteredKeys = Object.keys(viewedData).filter((key) => {
       if (
@@ -39,21 +41,21 @@ class View extends Component {
 
     const editForm = {};
     for (let key of filteredKeys) {
-      editForm[key] = viewedData[key];
+      editForm[key] = '';
     }
 
     setEditForm(editForm);
     this.setState({ isEditing: !isEditing });
   };
 
-  returnToDashboard = () => {
+  handleReturnToDashboard = () => {
     const { isEditing } = this.state;
-    const { history, setShowModal } = this.props;
+    const { history } = this.props;
 
     if (!isEditing) {
       history.push('/dashboard');
     } else {
-      setShowModal(true);
+      this.setShowModal(true);
     }
   };
 
@@ -64,19 +66,25 @@ class View extends Component {
     this.handleEditToggle();
   };
 
+  handleDiscardClick = () => {
+    const { history } = this.props;
+
+    this.setShowModal(false);
+    history.push('/dashboard');
+  };
+
   render() {
-    const { isEditing } = this.state;
+    const { isEditing, showModal } = this.state;
     const {
-      history,
-      showModal,
-      setShowModal,
       setEditFormField,
       currentTable,
       config,
       editForm,
+      viewedData,
     } = this.props;
     let button;
     let inputs;
+    console.log(editForm);
 
     inputs = config.ordering[currentTable].map((key) => {
       return (
@@ -135,12 +143,9 @@ class View extends Component {
             message="The changes in the form have not been submitted yet. Would you like to discard them and return to the Dashboard page, or cancel and return to the form?"
             leftBtnName="Cancel"
             rightBtnName="Discard"
-            exitOnClick={() => setShowModal(false)}
-            leftBtnOnClick={() => setShowModal(false)}
-            rightBtnOnClick={() => {
-              setShowModal(false);
-              history.push('/dashboard');
-            }}
+            exitOnClick={() => this.setShowModal(false)}
+            leftBtnOnClick={() => this.setShowModal(false)}
+            rightBtnOnClick={this.handleDiscardClick}
           />
         )}
         <Navigation />
@@ -159,7 +164,7 @@ class View extends Component {
                 isTransparent
                 message="Return to Dashboard"
                 type="right"
-                onClick={() => this.returnToDashboard()}
+                onClick={() => this.handleReturnToDashboard()}
               >
                 <FontAwesomeIcon icon="arrow-left" />
               </Button>

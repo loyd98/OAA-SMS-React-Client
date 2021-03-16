@@ -22,6 +22,7 @@ class Table extends Component {
       numOfPages: 1,
       itemsPerPage: Math.floor((window.innerHeight - 250) / 40),
       isRedirect: false,
+      currentDropdownItem: '',
     };
   }
 
@@ -64,15 +65,23 @@ class Table extends Component {
     if (prevProps.data !== this.props.data) {
       const height = window.innerHeight;
       const itemsPerPage = Math.floor((height - 250) / 40);
-      const numOfPages = Math.ceil(this.props.data.length / itemsPerPage);
+      const numOfPages = Math.ceil(this.props.data.length / itemsPerPage) || 1;
       this.setState({ numOfPages });
     }
 
-    // CHECK
-    // const { numOfPages, currentPage } = this.state;
-    // if (prevState.numOfPages !== numOfPages && currentPage > numOfPages) {
-    //   this.setState({ currentPage: numOfPages });
-    // }
+    // Go to the nearest number of pages when current page is greater than require number of pages
+    const { numOfPages, currentPage } = this.state;
+    const { currentTable } = this.props;
+
+    if (prevState.numOfPages !== numOfPages && currentPage > numOfPages) {
+      this.setState({ currentPage: numOfPages || 1 });
+    }
+
+    if (prevProps.currentTable !== currentTable) {
+      this.setState({
+        currentDropdownItem: config.dropdowns[currentTable][0].name,
+      });
+    }
   }
 
   handleLeftClick = () => {
@@ -160,8 +169,8 @@ class Table extends Component {
   render() {
     const { currentPage, numOfPages, itemsPerPage, isRedirect } = this.state;
     const { data, currentTable, handleDelete } = this.props;
-
     const items = this.sliceItems(data, itemsPerPage, currentPage);
+    const dropdownItems = config.dropdowns[currentTable];
 
     if (isRedirect) {
       this.setState({ isRedirect: false });
@@ -180,6 +189,8 @@ class Table extends Component {
                   ) {
                     return (
                       <div
+                        data-id={table}
+                        onClick={(e) => console.log(e.currentTarget.dataset.id)}
                         key={table}
                         className="table__flag flex--horizontal flag--active"
                       >
@@ -188,7 +199,12 @@ class Table extends Component {
                     );
                   } else {
                     return (
-                      <div key={table} className="table__flag flex--horizontal">
+                      <div
+                        data-id={table}
+                        key={table}
+                        className="table__flag flex--horizontal"
+                        onClick={(e) => console.log(e.currentTarget.dataset.id)}
+                      >
                         <span>{table}</span>
                       </div>
                     );
@@ -221,7 +237,7 @@ class Table extends Component {
                 </Button>
                 <Dropdown
                   title="Dropdown"
-                  list={['#', 'Donor Name', 'Email Address']}
+                  list={dropdownItems.map((i) => i.name)}
                 />
                 <Button isTransparent message="Sort" type="center">
                   <FontAwesomeIcon icon="sort" />

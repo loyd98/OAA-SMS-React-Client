@@ -1,16 +1,3 @@
-input {
-  height: 20px;
-  width: 250px;
-  border: 1px solid var(--blue);
-}
-
-button {
-  width: 20px;
-  height: 20px;
-  border: 1px solid var(--blue);
-  padding: 0;
-}
-
 .search {
   height: 45px;
   width: 100%;
@@ -20,7 +7,30 @@ button {
   justify-content: space-between;
 }
 
-.username svg {
-  margin-right: 5px;
+.search__container {
+  border: 1px solid var(--blue);
 }
+
+.search button {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+}
+
+.search input {
+  height: 20px;
+  width: 250px;
+  border: 0;
+}
+
+.search input:focus {
+  outline: 0;
+}
+
+.username svg {
+  margin-right: 10px;
+}
+
+
 

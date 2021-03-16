@@ -22,12 +22,10 @@ class App extends Component {
       data: [],
       username: '',
       password: '',
-      redirect: null,
       currentTable: sessionStorage.getItem('currentTable'),
-      viewedData: {},
-      showModal: false,
+      viewedData: JSON.parse(sessionStorage.getItem('viewedData')),
       showAdd: false,
-      currentId: null,
+      currentId: sessionStorage.getItem('currentId'),
       addForm: {},
       editForm: {},
       config: config,
@@ -60,11 +58,6 @@ class App extends Component {
       this.setState({ viewedData });
     }
 
-    const showModal = sessionStorage.getItem('showModal');
-    if (showModal) {
-      this.setState({ showModal: showModal === 'true' });
-    }
-
     const currentId = sessionStorage.getItem('currentId');
     if (currentId) {
       this.setState({ currentId });
@@ -77,7 +70,6 @@ class App extends Component {
       username,
       currentTable,
       viewedData,
-      showModal,
       config,
       currentId,
     } = this.state;
@@ -107,10 +99,6 @@ class App extends Component {
     if (prevState.viewedData !== viewedData) {
       const temp = JSON.stringify(viewedData);
       sessionStorage.setItem('viewedData', temp);
-    }
-
-    if (prevState.showModal !== showModal) {
-      sessionStorage.setItem('showModal', showModal);
     }
 
     if (prevState.currentId !== currentId) {
@@ -167,8 +155,6 @@ class App extends Component {
   setPassword = (password) => this.setState({ password });
 
   setViewedData = (viewedData) => this.setState({ viewedData });
-
-  setShowModal = (showModal) => this.setState({ showModal });
 
   setShowAdd = (showAdd) => this.setState({ showAdd });
 
@@ -267,7 +253,7 @@ class App extends Component {
     const { searchTimeout } = this.state;
     const options = {
       headers: { Authorization: `Bearer ${token}` },
-      params: { keyword },
+      params: { keyword: keyword !== '' ? keyword : null },
     };
 
     if (searchTimeout) {
@@ -294,7 +280,6 @@ class App extends Component {
       redirect,
       currentTable,
       viewedData,
-      showModal,
       showAdd,
       config,
       editForm,
@@ -360,9 +345,7 @@ class App extends Component {
                   data={data}
                   currentTable={currentTable}
                   viewedData={viewedData}
-                  showModal={showModal}
                   editForm={editForm}
-                  setShowModal={this.setShowModal}
                   setEditFormField={this.setEditFormField}
                   config={config}
                   handleEditFormSubmit={this.handleEditFormSubmit}
