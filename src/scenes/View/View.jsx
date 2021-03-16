@@ -23,10 +23,13 @@ class View extends Component {
     this.setState({ isEditing: !isEditing });
   };
 
+  handleModalCancel = () => {
+    this.setState({ isEditing: !isEditing, showModal: false });
+  };
+
   handleCancelClick = () => {
     const { isEditing } = this.state;
     const { setEditForm, viewedData } = this.props;
-    this.setState({ isEditing: !isEditing, showModal: false });
 
     const filteredKeys = Object.keys(viewedData).filter((key) => {
       if (
@@ -44,6 +47,11 @@ class View extends Component {
       editForm[key] = '';
     }
 
+    for (let key of filteredKeys) {
+      editForm[key] = viewedData[key];
+    }
+
+    console.log(editForm);
     setEditForm(editForm);
     this.setState({ isEditing: !isEditing });
   };
@@ -84,7 +92,6 @@ class View extends Component {
     } = this.props;
     let button;
     let inputs;
-    console.log(editForm);
 
     inputs = config.ordering[currentTable].map((key) => {
       return (

@@ -23,7 +23,7 @@ class App extends Component {
       username: '',
       password: '',
       currentTable: sessionStorage.getItem('currentTable'),
-      viewedData: JSON.parse(sessionStorage.getItem('viewedData')),
+      viewedData: {},
       showAdd: false,
       currentId: sessionStorage.getItem('currentId'),
       addForm: {},
@@ -35,7 +35,8 @@ class App extends Component {
     this.url = 'http://localhost:8080';
   }
 
-  componentDidMount() {
+  componentWillMount() {
+    console.log('hit');
     sessionStorage.setItem('config', config);
 
     const data = JSON.parse(localStorage.getItem('data'));
@@ -62,6 +63,11 @@ class App extends Component {
     if (currentId) {
       this.setState({ currentId });
     }
+
+    const editForm = JSON.parse(sessionStorage.getItem('editForm'));
+    if (editForm) {
+      this.setState({ editForm });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -72,6 +78,7 @@ class App extends Component {
       viewedData,
       config,
       currentId,
+      editForm,
     } = this.state;
 
     if (prevState.data !== data) {
@@ -86,7 +93,6 @@ class App extends Component {
     if (prevState.currentTable !== currentTable) {
       sessionStorage.setItem('currentTable', currentTable);
 
-      console.log(currentTable);
       const addForm = {};
       config.ordering[currentTable].map((key) => (addForm[key.key] = ''));
       this.setState({ addForm });
@@ -104,6 +110,11 @@ class App extends Component {
 
     if (prevState.currentId !== currentId) {
       sessionStorage.setItem('currentId', currentId);
+    }
+
+    if (prevProps.editForm !== editForm) {
+      const temp = JSON.stringify(editForm);
+      sessionStorage.setItem('editForm', temp);
     }
   }
 
@@ -173,7 +184,6 @@ class App extends Component {
     this.setState((prevState) => ({
       editForm: { ...prevState.editForm, [field]: value },
     }));
-    console.log(this.state.editForm);
   };
 
   setAddFormField = (field, value) => {
