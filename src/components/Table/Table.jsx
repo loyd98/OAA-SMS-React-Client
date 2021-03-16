@@ -7,13 +7,13 @@ import Button from '../Buttons/Button/Button';
 import Dropdown from '../Dropdown/Dropdown';
 import { Redirect, withRouter } from 'react-router';
 
+const axios = require('axios');
 const config = require('../../data.config');
 
 class Table extends Component {
   constructor(props) {
     super(props);
 
-    this.fields = config.ordering.donors;
     this.tables = config.tables;
     this.endColNum = 7;
     this.state = {
@@ -23,6 +23,7 @@ class Table extends Component {
       itemsPerPage: Math.floor((window.innerHeight - 250) / 40),
       isRedirect: false,
       currentDropdownItem: '',
+      fields: config.ordering[this.props.currentTable],
     };
   }
 
@@ -81,6 +82,8 @@ class Table extends Component {
       this.setState({
         currentDropdownItem: config.dropdowns[currentTable][0].name,
       });
+      console.log('hit');
+      this.setState({ fields: config.ordering[this.props.currentTable] });
     }
   }
 
@@ -160,6 +163,23 @@ class Table extends Component {
     history.push(`view/1?id=${id}`);
   };
 
+  handleTabClick = (e) => {
+    const id = e.currentTarget.dataset.id.toLowerCase();
+    const token = sessionStorage.getItem('token');
+    const { setCurrentTable, setData } = this.props;
+
+    setCurrentTable(id);
+
+    if (id === 'donations') {
+      axios
+        .get('http://localhost:8080/donation/asc', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => setData(res.data))
+        .catch((err) => console.log(err));
+    }
+  };
+
   handleAddClick = () => {
     const { setShowAdd } = this.props;
 
@@ -167,7 +187,13 @@ class Table extends Component {
   };
 
   render() {
-    const { currentPage, numOfPages, itemsPerPage, isRedirect } = this.state;
+    const {
+      currentPage,
+      numOfPages,
+      itemsPerPage,
+      isRedirect,
+      fields,
+    } = this.state;
     const { data, currentTable, handleDelete } = this.props;
     const items = this.sliceItems(data, itemsPerPage, currentPage);
     const dropdownItems = config.dropdowns[currentTable];
@@ -190,7 +216,6 @@ class Table extends Component {
                     return (
                       <div
                         data-id={table}
-                        onClick={(e) => console.log(e.currentTarget.dataset.id)}
                         key={table}
                         className="table__flag flex--horizontal flag--active"
                       >
@@ -203,7 +228,7 @@ class Table extends Component {
                         data-id={table}
                         key={table}
                         className="table__flag flex--horizontal"
-                        onClick={(e) => console.log(e.currentTarget.dataset.id)}
+                        onClick={(e) => this.handleTabClick(e)}
                       >
                         <span>{table}</span>
                       </div>
@@ -258,7 +283,7 @@ class Table extends Component {
         </thead>
         <thead id="table__bottom">
           <tr className="table__bottomRow">
-            {this.fields.slice(0, this.endColNum).map((col) => (
+            {fields.slice(0, this.endColNum).map((col) => (
               <th style={{ width: col.width }} key={col.key}>
                 {col.name}
               </th>
@@ -269,7 +294,7 @@ class Table extends Component {
         <tbody>
           {items.map((row, i) => (
             <tr key={row.id}>
-              {this.fields.slice(0, this.endColNum).map((col) => {
+              {fields.slice(0, this.endColNum).map((col) => {
                 if (col.key === '#') {
                   return (
                     <td style={{ width: col.width }} key={col.key}>

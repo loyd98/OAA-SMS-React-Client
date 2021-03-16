@@ -86,6 +86,7 @@ class App extends Component {
     if (prevState.currentTable !== currentTable) {
       sessionStorage.setItem('currentTable', currentTable);
 
+      console.log(currentTable);
       const addForm = {};
       config.ordering[currentTable].map((key) => (addForm[key.key] = ''));
       this.setState({ addForm });
@@ -163,6 +164,10 @@ class App extends Component {
   setConfig = (config) => this.setState({ config });
 
   setCurrentId = (currentId) => this.setState({ currentId });
+
+  setCurrentTable = (currentTable) => this.setState({ currentTable });
+
+  setData = (data) => this.setState({ data });
 
   setEditFormField = (field, value) => {
     this.setState((prevState) => ({
@@ -331,6 +336,8 @@ class App extends Component {
                       setCurrentId={this.setCurrentId}
                       searchQuery={this.searchQuery}
                       handleSearch={this.handleSearch}
+                      setCurrentTable={this.setCurrentTable}
+                      setData={this.setData}
                     />
                   </>
                 </>

@@ -4,7 +4,7 @@ import './Dashboard.scoped.css';
 const axios = require('axios');
 
 import SearchBar from '../../components/SearchBar/SearchBar';
-import TableContainer from '../../components/TableContainer/TableContainer';
+import Table from '../../components/Table/Table';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -26,6 +26,8 @@ export default class Dashboard extends Component {
       setCurrentId,
       searchQuery,
       handleSearch,
+      setCurrentTable,
+      setData,
     } = this.props;
 
     return (
@@ -35,7 +37,7 @@ export default class Dashboard extends Component {
           searchQuery={searchQuery}
           handleSearch={handleSearch}
         />
-        <TableContainer
+        <Table
           data={data}
           currentTable={currentTable}
           handlePagination={handlePagination}
@@ -44,6 +46,8 @@ export default class Dashboard extends Component {
           setShowAdd={setShowAdd}
           setEditForm={setEditForm}
           setCurrentId={setCurrentId}
+          setCurrentTable={setCurrentTable}
+          setData={setData}
         />
       </div>
     );

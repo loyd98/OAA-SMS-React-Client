@@ -26,14 +26,30 @@ module.exports = {
       { key: 'lastModifiedBy', name: 'Last Modified By', width: '100px' },
       { key: 'lastModifiedDate', name: 'Last Modified Date', width: '100px' },
     ],
+    donations: [
+      // width refers to column width
+      // { key: '#', name: '#', width: '20px' },
+      { key: 'id', name: 'Donation ID', width: '50px' },
+      { key: 'accountNumber', name: 'Account Number', width: '70px' },
+      { key: 'accountName', name: 'Account Name', width: '60px' },
+      { key: 'orNumber', name: 'OR Number', width: '70px' },
+      { key: 'date', name: 'Date', width: '70px' },
+      { key: 'amount', name: 'Amount', width: '70px' },
+      { key: 'notes', name: 'Notes', width: '70px' },
+      { key: 'orFiles', name: 'OR Files', width: '100px' },
+      { key: 'tyFiles', name: 'TY Files', width: '100px' },
+      { key: 'codFiles', name: 'COD Files', width: '100px' },
+      { key: 'needCertificate', name: 'Need Certificate', width: '100px' },
+      { key: 'purposeOfDonation', name: 'Purpose of Donation', width: '100px' },
+    ],
   },
   tables: [
     'Donors',
+    'Donations',
     'Scholars',
     'Scholarships',
     'MOAs',
     'Documents',
-    'Donations',
   ],
   dropdowns: {
     donors: [
@@ -56,6 +72,14 @@ module.exports = {
         routeDesc: 'donor/account/desc',
       },
     ],
+    donations: [
+      {
+        key: 'id',
+        name: 'Donation ID',
+        routeAsc: 'donation/asc',
+        routeDesc: 'donation/desc',
+      },
+    ],
   },
-  defaultTable: 'donnors',
+  defaultTable: 'donors',
 };
