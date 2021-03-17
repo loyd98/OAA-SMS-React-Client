@@ -94,7 +94,14 @@ class Login extends Component {
             <button
               id="login__proceed--btn"
               onClick={(e) => {
-                this.handleSubmit(e, url, username, password).then((resp) => {
+                this.handleSubmit(
+                  e,
+                  url,
+                  username,
+                  password,
+                  handleCurrentData,
+                  handleCurrentTable,
+                ).then((resp) => {
                   if (resp) history.push('/dashboard');
                 });
               }}

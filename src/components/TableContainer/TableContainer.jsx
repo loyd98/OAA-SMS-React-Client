@@ -14,29 +14,135 @@ class TableContainer extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      height: 0,
+      currentPage: 1,
+      numOfPages: 1,
+      itemsPerPage: Math.floor((window.innerHeight - 250) / 40),
+    };
   }
 
-  render() {
-    const { data, currentTable, handleDelete, handleTabClick } = this.props;
-    const items = this.sliceItems(data, itemsPerPage, currentPage);
-    const dropdownItems = config.dropdowns[currentTable];
+  componentDidMount() {
+    const temp = sessionStorage.getItem('pageDetails');
+    const loadedData = JSON.parse(temp);
 
-    if (isRedirect) {
-      this.setState({ isRedirect: false });
-      return <Redirect to="/view" />;
+    if (loadedData) {
+      const { currentPage, numOfPages, itemsPerPage } = loadedData;
+      this.setState({ currentPage, numOfPages, itemsPerPage });
+    } else {
+      const height = window.innerHeight;
+      const currentPage = 1;
+      const itemsPerPage = Math.floor((height - 250) / 40);
+      let numOfPages;
+
+      if (this.props.currentData.length === 0) {
+        numOfPages = 1;
+      } else {
+        numOfPages = Math.ceil(this.props.currentData.length / itemsPerPage);
+      }
+
+      this.setState({ currentPage, itemsPerPage, numOfPages });
+      const pageDetails = JSON.stringify({
+        currentPage,
+        itemsPerPage,
+        numOfPages,
+      });
+
+      sessionStorage.setItem('pageDetails', pageDetails);
     }
+    window.addEventListener('resize', this.updateHeight);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateHeight);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.currentData !== this.props.currentData) {
+      const height = window.innerHeight;
+      const itemsPerPage = Math.floor((height - 250) / 40);
+      const numOfPages =
+        Math.ceil(this.props.currentData.length / itemsPerPage) || 1;
+      this.setState({ numOfPages });
+    }
+
+    // Go to the nearest number of pages when current page is greater than require number of pages
+    const { numOfPages, currentPage } = this.state;
+    const { currentTable } = this.props;
+
+    if (prevState.numOfPages !== numOfPages && currentPage > numOfPages) {
+      this.setState({ currentPage: numOfPages || 1 });
+    }
+
+    if (prevProps.currentTable !== currentTable) {
+      this.setState({
+        currentDropdownItem: config.dropdowns[currentTable][0].name,
+      });
+    }
+  }
+
+  handleLeftClick = () => {
+    this.setState((prevState) => ({
+      currentPage: prevState.currentPage > 1 ? prevState.currentPage - 1 : 1,
+    }));
+  };
+
+  handleRightClick = () => {
+    const { numOfPages } = this.state;
+
+    this.setState((prevState) => ({
+      currentPage:
+        prevState.currentPage < numOfPages
+          ? prevState.currentPage + 1
+          : numOfPages,
+    }));
+  };
+
+  sliceItems = (currentData, itemsPerPage, currentPage) => {
+    currentPage--;
+    let start = itemsPerPage * currentPage;
+    let end = start + itemsPerPage;
+    let paginatedItems = currentData.slice(start, end);
+    return paginatedItems;
+  };
+
+  updateHeight = () => {
+    const { height, currentPage } = this.state;
+    const { currentData } = this.props;
+
+    this.setState({ height: window.innerHeight });
+
+    const itemsPerPage = Math.floor((height - 250) / 40);
+    const numOfPages = Math.ceil(currentData.length / itemsPerPage);
+    if (itemsPerPage > 0) {
+      this.setState({ currentPage, itemsPerPage, numOfPages });
+    }
+  };
+
+  handleRedirect = (id) => {
+    const { history, handleRead } = this.props;
+    handleRead('http://localhost:8000', `/donor`, id)
+      .then((res) => (res ? history.push('/view') : null))
+      .catch((err) => console.log(err));
+  };
+
+  render() {
+    const { config, currentTable, currentData } = this.props;
+    const { currentPage, numOfPages, itemsPerPage } = this.state;
+    const tables = config.tables;
+    const fields = config.ordering[currentTable];
+    const items = this.sliceItems(currentData, itemsPerPage, currentPage);
+    const colLimit = 7;
+    // const dropdownItems = config.dropdowns[currentTable];
+
     return (
       <table className="table">
         <thead id="table__top">
           <tr className="table__topRow flex--horizontal">
             <td className="flex--horizontal">
               <div className="table__flags flex--horizontal">
-                {this.tables.map((table) => {
-                  if (
-                    table ===
-                    currentTable.charAt(0).toUpperCase() + currentTable.slice(1)
-                  ) {
+                {tables.map((table) => {
+                  if (table.toLowerCase() === currentTable) {
                     return (
                       <div
                         data-id={table}
@@ -84,10 +190,10 @@ class TableContainer extends Component {
                 <Button isTransparent message="Export" type="left">
                   <FontAwesomeIcon icon="file-download" />
                 </Button>
-                <Dropdown
+                {/* <Dropdown
                   title="Dropdown"
                   list={dropdownItems.map((i) => i.name)}
-                />
+                /> */}
                 <Button isTransparent message="Sort" type="center">
                   <FontAwesomeIcon icon="sort" />
                 </Button>
@@ -108,7 +214,7 @@ class TableContainer extends Component {
         <Table
           fields={fields}
           items={items}
-          redirectToView={this.handleViewClick}
+          redirectToView={this.handleRedirect}
           colLimit={7}
           handleDelete={this.handleDeleteClick}
         />

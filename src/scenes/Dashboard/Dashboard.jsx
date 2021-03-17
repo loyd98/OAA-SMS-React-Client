@@ -14,10 +14,17 @@ export default class Dashboard extends Component {
   }
 
   render() {
+    const { config, currentTable, currentData, handleRead } = this.props;
+
     return (
       <div className="dashboard flex--vertical">
         <SearchBar />
-        <TableContainer />
+        <TableContainer
+          config={config}
+          currentData={currentData}
+          currentTable={currentTable}
+          handleRead={handleRead}
+        />
       </div>
     );
   }

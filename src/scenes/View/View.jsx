@@ -18,19 +18,12 @@ class View extends Component {
   }
 
   render() {
-    const { isEditing, showModal, showAdd, tableInView } = this.state;
-    const {
-      setEditFormField,
-      currentTable,
-      config,
-      editForm,
-      dataInView,
-    } = this.props;
-    const currentString =
-      currentTable.toString()[0].toUpperCase() +
-      currentTable.toString().slice(1);
+    const { currentData } = this.props;
+    // const currentString =
+    //   currentTable.toString()[0].toUpperCase() +
+    //   currentTable.toString().slice(1);
 
-    console.log(dataInView);
+    console.log(currentData);
 
     let button;
     let inputs;

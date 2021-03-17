@@ -33,8 +33,27 @@ class App extends Component {
   handleCurrentTable = (currentTable) => this.setState({ currentTable });
   handleCurrentData = (currentData) => this.setState({ currentData });
 
+  // Read
+  handleRead = async (url, pathParameter, id) => {
+    const token = sessionStorage.getItem('token');
+    const options = {
+      params: { id },
+      headers: { Authorization: `Bearer ${token.data}` },
+    };
+
+    try {
+      const res = await axios.get(`${url}${pathParameter}`, options);
+      this.setState({ currentData: res.data });
+      return true;
+    } catch (err) {
+      console.log(err.response);
+    }
+
+    return false;
+  };
+
   render() {
-    const { username, password } = this.state;
+    const { username, password, currentData, currentTable } = this.state;
 
     return (
       <div className="App">
@@ -63,12 +82,21 @@ class App extends Component {
                 <>
                   <>
                     <Navigation />
-                    <Dashboard />
+                    <Dashboard
+                      config={config}
+                      currentData={currentData}
+                      currentTable={currentTable}
+                      handleRead={this.handleRead}
+                    />
                   </>
                 </>
               )}
             />
-            <Route exact path-="view/1?id=:id" render={(props) => <View />} />
+            <Route
+              exact
+              path-="view/1?id=:id"
+              render={(props) => <View currentData={currentData} />}
+            />
           </Switch>
         </HashRouter>
       </div>
