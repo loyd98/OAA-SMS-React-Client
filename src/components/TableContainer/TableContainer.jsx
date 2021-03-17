@@ -98,11 +98,11 @@ class TableContainer extends Component {
     }));
   };
 
-  sliceItems = (currentData, itemsPerPage, currentPage) => {
+  sliceItems = (data, itemsPerPage, currentPage) => {
     currentPage--;
     let start = itemsPerPage * currentPage;
     let end = start + itemsPerPage;
-    let paginatedItems = currentData.slice(start, end);
+    let paginatedItems = data.slice(start, end);
     return paginatedItems;
   };
 
@@ -121,14 +121,15 @@ class TableContainer extends Component {
 
   handleRedirect = (id) => {
     const { history, handleRead } = this.props;
-    handleRead('http://localhost:8000', `/donor`, id)
-      .then((res) => (res ? history.push('/view') : null))
+    handleRead('http://localhost:8080', `/donor/${id}`)
+      .then((res) => history.push('/view'))
       .catch((err) => console.log(err));
   };
 
   render() {
     const { config, currentTable, currentData } = this.props;
     const { currentPage, numOfPages, itemsPerPage } = this.state;
+    console.log(currentData);
     const tables = config.tables;
     const fields = config.ordering[currentTable];
     const items = this.sliceItems(currentData, itemsPerPage, currentPage);

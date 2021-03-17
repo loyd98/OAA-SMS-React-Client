@@ -77,8 +77,6 @@ class View extends Component {
       );
     }
 
-    console.log(currentString);
-
     return (
       <>
         {showAdd && (

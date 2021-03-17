@@ -35,18 +35,20 @@ class App extends Component {
 
   // Read
   handleRead = async (url, pathParameter, id) => {
-    const token = sessionStorage.getItem('token');
-    const options = {
-      params: { id },
-      headers: { Authorization: `Bearer ${token.data}` },
-    };
-
     try {
+      const token = sessionStorage.getItem('token');
+      const options = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      };
+
       const res = await axios.get(`${url}${pathParameter}`, options);
-      this.setState({ currentData: res.data });
+      this.setState({ currentData: [res.data] });
       return true;
     } catch (err) {
-      console.log(err.response);
+      console.log(err);
     }
 
     return false;
@@ -87,6 +89,7 @@ class App extends Component {
                       currentData={currentData}
                       currentTable={currentTable}
                       handleRead={this.handleRead}
+                      handleCurrentData={this.handleCurrentData}
                     />
                   </>
                 </>

@@ -14,7 +14,13 @@ export default class Dashboard extends Component {
   }
 
   render() {
-    const { config, currentTable, currentData, handleRead } = this.props;
+    const {
+      config,
+      currentTable,
+      currentData,
+      handleRead,
+      handleCurrentData,
+    } = this.props;
 
     return (
       <div className="dashboard flex--vertical">
@@ -24,6 +30,7 @@ export default class Dashboard extends Component {
           currentData={currentData}
           currentTable={currentTable}
           handleRead={handleRead}
+          handleCurrentData={handleCurrentData}
         />
       </div>
     );
