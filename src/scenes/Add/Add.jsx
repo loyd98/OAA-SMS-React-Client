@@ -28,13 +28,11 @@ class Add extends Component {
       handleAddFormSubmit,
     } = this.props;
 
-    console.log(this.props);
-
     return (
       <div className="add__background">
         <form className="add">
           <Button isTransparent onClick={() => setShowAdd(false)}>
-            Return to Dashboard
+            Cancel
           </Button>
           {config.ordering[currentTable].map((key) => {
             if (

@@ -41,6 +41,10 @@ module.exports = {
       { key: 'codFiles', name: 'COD Files', width: '100px' },
       { key: 'needCertificate', name: 'Need Certificate', width: '100px' },
       { key: 'purposeOfDonation', name: 'Purpose of Donation', width: '100px' },
+      { key: 'createdBy', name: 'Created By', width: '100px' },
+      { key: 'creationDate', name: 'Creation Date', width: '100px' },
+      { key: 'lastModifiedBy', name: 'Last Modified By', width: '100px' },
+      { key: 'lastModifiedDate', name: 'Last Modified Date', width: '100px' },
     ],
   },
   tables: [
@@ -51,6 +55,9 @@ module.exports = {
     'MOAs',
     'Documents',
   ],
+  tablesInView: {
+    donors: ['donations'],
+  },
   dropdowns: {
     donors: [
       {
@@ -82,5 +89,5 @@ module.exports = {
     ],
   },
   defaultTable: 'donors',
-  PORT: 'http://localhost:8080',
+  URL: 'http://localhost:8080',
 };

@@ -20,6 +20,7 @@ class App extends Component {
     super(props);
     this.state = {
       data: [],
+      dataInView: [],
       username: '',
       password: '',
       currentTable: sessionStorage.getItem('currentTable'),
@@ -32,7 +33,7 @@ class App extends Component {
       searchQuery: '',
       searchTimeout: 0,
     };
-    this.url = 'http://localhost:8080';
+    this.url = config.URL;
   }
 
   componentWillMount() {
@@ -118,49 +119,70 @@ class App extends Component {
     }
   }
 
-  fetchData = async (token) => {
-    if (token) {
-      sessionStorage.setItem('token', token);
-      try {
-        const data = await axios.get(`${this.url}/donor/asc`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+  handleRead = async (path) => {
+    const token = sessionStorage.getItem('token');
 
-        this.setState({ data: data.data });
-        return true;
-      } catch (err) {
-        console.log(err);
+    const options = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+
+    if (token) {
+      try {
+        const res = await axios.get(`${this.url}${path}`, options);
+        this.setState({ data: res.data });
+      } catch {
+        (err) => console.log(err);
       }
     }
 
-    return false;
+    return [];
   };
 
-  handleSubmit = async (e) => {
-    const { username, password } = this.state;
+  // fetchData = async (token) => {
+  //   const { currentTable } = this.state;
+  //   const options = {
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   };
 
-    e.preventDefault();
-    const token = await this.loginUser({
-      username,
-      password,
-    });
+  //   if (token) {
+  //     if (currentTable === 'donors') {
+  //       try {
+  //         const res = await axios.get(`${this.url}/donor/asc`, options);
+  //         this.setState({ data: res.data });
+  //       } catch {
+  //         (err) => console.log(err);
+  //       }
+  //     } else if (currentTable === 'donations') {
+  //       try {
+  //         const res = await axios.get(`${this.url}/donation/asc`, options);
+  //         this.setState({ data: res.data });
+  //       } catch {
+  //         (err) => console.log(err);
+  //       }
+  //     }
+  //   }
 
-    if (token) {
-      sessionStorage.setItem('token', token.data);
-      try {
-        const data = await axios.get(`${this.url}/donor/asc`, {
-          headers: { Authorization: `Bearer ${token.data}` },
-        });
+  //   return [];
+  // };
 
-        this.setState({ data: data.data, currentTable: 'donors' });
-        return true;
-      } catch (err) {
-        console.log(err);
-      }
-    }
+  // requestDataInView = async (path) => {
+  //   const token = sessionStorage.getItem('token');
 
-    return false;
-  };
+  //   const options = {
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   };
+
+  //   if (token) {
+  //     try {
+  //       const res = await axios.get(`${this.url}${path}`, options);
+  //       this.setState({ dataInView: res.data });
+  //     } catch {
+  //       (err) => console.log(err);
+  //     }
+  //   }
+
+  //   return [];
+  // };
 
   setUsername = (username) => this.setState({ username });
 
@@ -180,6 +202,8 @@ class App extends Component {
 
   setData = (data) => this.setState({ data });
 
+  setDataInView = (dataInView) => this.setState({ dataInView });
+
   setEditFormField = (field, value) => {
     this.setState((prevState) => ({
       editForm: { ...prevState.editForm, [field]: value },
@@ -195,35 +219,35 @@ class App extends Component {
     }));
   };
 
-  loginUser = async (credentials) => {
-    try {
-      const resp = await axios.post(`${this.url}/login`, credentials);
-      return resp;
-    } catch (err) {
-      console.error(err);
-    }
-
-    return null;
-  };
-
-  handleAddFormSubmit = () => {
-    const { addForm } = this.state;
+  handleAddFormSubmit = async () => {
+    const { addForm, currentTable } = this.state;
     const token = sessionStorage.getItem('token');
     const options = {
       headers: { Authorization: `Bearer ${token}` },
     };
 
-    axios
-      .post(`${this.url}/donor/add`, addForm, options)
-      .then((res) => {
+    if (currentTable === 'donors') {
+      axios
+        .post(`${this.url}/donor/add`, addForm, options)
+        .then((res) => {
+          if (res.status === 200) {
+            localStorage.clear();
+            this.fetchData(token);
+          } else {
+            //TODO
+          }
+        })
+        .catch((err) => console.log(err));
+    } else if (currentTable === 'donations') {
+      axios.post(`${this.url}/donation/add`, addForm, options).then((res) => {
         if (res.status === 200) {
           localStorage.clear();
           this.fetchData(token);
         } else {
           //TODO
         }
-      })
-      .catch((err) => console.log(err));
+      });
+    }
   };
 
   handleEditFormSubmit = (e) => {
@@ -245,22 +269,39 @@ class App extends Component {
   };
 
   handleDelete = (e) => {
+    const { currentTable } = this.state;
     const token = sessionStorage.getItem('token');
     const id = e.target.dataset.id + '';
 
-    axios
-      .delete(`${this.url}/donor/delete/id`, {
-        data: id,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((res) => {
-        // this.setState({ viewedData: res.data });
-        this.fetchData(token);
-      })
-      .catch((err) => console.log(err.response));
+    if (currentTable === 'donors') {
+      axios
+        .delete(`${this.url}/donor/delete/id`, {
+          data: id,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((res) => {
+          // this.setState({ viewedData: res.data });
+          this.fetchData(token);
+        })
+        .catch((err) => console.log(err.response));
+    } else if (currentTable === 'donations') {
+      axios
+        .delete(`${this.url}/donation/delete/id`, {
+          data: id,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((res) => {
+          // this.setState({ viewedData: res.data });
+          this.fetchData(token);
+        })
+        .catch((err) => console.log(err.response));
+    }
   };
 
   handleSearch = (keyword) => {
@@ -287,9 +328,33 @@ class App extends Component {
     });
   };
 
+  handleTabClick = (e) => {
+    const id = e.currentTarget.dataset.id.toLowerCase();
+    const token = sessionStorage.getItem('token');
+
+    this.setState({ currentTable: id });
+
+    if (id === 'donations') {
+      axios
+        .get(`${this.url}/donation/asc`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => this.setState({ data: res.data }))
+        .catch((err) => console.log(err));
+    } else if (id === 'donors') {
+      axios
+        .get(`${this.url}/donor/asc`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => this.setState({ data: res.data }))
+        .catch((err) => console.log(err));
+    }
+  };
+
   render() {
     const {
       data,
+      dataInView,
       username,
       password,
       redirect,
@@ -338,16 +403,13 @@ class App extends Component {
                       data={data}
                       username={username}
                       currentTable={currentTable}
-                      handlePagination={this.handlePagination}
-                      handleDelete={this.handleDelete}
-                      setViewedData={this.setViewedData}
                       setShowAdd={this.setShowAdd}
-                      setEditForm={this.setEditForm}
                       setCurrentId={this.setCurrentId}
                       searchQuery={this.searchQuery}
                       handleSearch={this.handleSearch}
                       setCurrentTable={this.setCurrentTable}
-                      setData={this.setData}
+                      config={config}
+                      handleRead={this.handleRead}
                     />
                   </>
                 </>
@@ -369,6 +431,8 @@ class App extends Component {
                   setViewedData={this.setViewedData}
                   setConfig={this.setConfig}
                   setEditForm={this.setEditForm}
+                  setShowAdd={this.setShowAdd}
+                  dataInView={dataInView}
                 />
               )}
             />

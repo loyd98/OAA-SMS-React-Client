@@ -4,7 +4,7 @@ import './Dashboard.scoped.css';
 const axios = require('axios');
 
 import SearchBar from '../../components/SearchBar/SearchBar';
-import Table from '../../components/Table/Table';
+import TableContainer from '../../components/TableContainer/TableContainer';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -17,17 +17,14 @@ export default class Dashboard extends Component {
     const {
       data,
       currentTable,
-      handlePagination,
-      handleDelete,
       username,
-      setViewedData,
       setShowAdd,
-      setEditForm,
       setCurrentId,
       searchQuery,
       handleSearch,
       setCurrentTable,
-      setData,
+      config,
+      handleRead,
     } = this.props;
 
     return (
@@ -37,17 +34,14 @@ export default class Dashboard extends Component {
           searchQuery={searchQuery}
           handleSearch={handleSearch}
         />
-        <Table
+        <TableContainer
           data={data}
           currentTable={currentTable}
-          handlePagination={handlePagination}
-          handleDelete={handleDelete}
-          setViewedData={setViewedData}
           setShowAdd={setShowAdd}
-          setEditForm={setEditForm}
           setCurrentId={setCurrentId}
           setCurrentTable={setCurrentTable}
-          setData={setData}
+          config={config}
+          handleRead={handleRead}
         />
       </div>
     );

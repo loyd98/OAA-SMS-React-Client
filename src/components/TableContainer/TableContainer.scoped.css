@@ -1,5 +1,159 @@
-.tableContainer {
+#table__top,
+#table__middle {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+#table__top {
+  background-color: var(--grey);
+}
+
+#table__top tr {
   width: 100%;
+  padding: 0;
   height: 100%;
+  align-content: flex-start;
+  justify-content: space-between;
+}
+
+#table__top td {
+  height: 30px;
+  padding: 0;
+}
+
+#table__middle tr,
+#table__middle td {
+  width: 100%;
+  padding: 0 2.5px;
+}
+
+#table__middle td {
+  justify-content: space-between;
+}
+
+#table__bottom {
+  height: 45px;
+  padding: 0 15px;
+}
+
+#table__top,
+#table__middle {
+  margin-left: 0px;
+}
+
+.table {
+  width: 100%;
+  min-width: 1050px;
+  height: calc(100% - 50px);
+  margin-top: 40px;
+  display: block;
+  background-color: var(--white);
+  border-radius: var(--border-radius);
   overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+tbody td {
+  text-align: left;
+}
+
+tbody tr {
+  margin-left: 15px;
+}
+
+tbody tr:hover {
+  outline: 1px solid var(--orange);
+}
+
+th {
+  text-align: left;
+  color: var(--blue);
+  padding: 0 15px;
+}
+
+thead,
+tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  margin-left: 15px;
+}
+
+tbody tr,
+thead tr {
+  padding: 10px 15px;
+  height: 40px;
+}
+
+tbody td,
+thead td {
+  padding: 0 15px;
+}
+
+table {
+  border: none;
+  border-collapse: collapse;
+}
+
+table th {
+  border-left: 1px solid var(--blue);
+  border-right: 1px solid var(--blue);
+}
+
+table th:first-child {
+  border-left: none;
+}
+
+table th:last-child {
+  border-right: none;
+}
+
+.flag--active {
+  background-color: var(--white) !important;
+  height: 50px !important;
+  margin-top: 0px !important;
+  color: var(--black) !important;
+}
+
+.flag--active span {
+  border-bottom: 3px solid var(--blue);
+}
+
+.table__pagination button {
+  background-color: var(--white);
+}
+
+.table__pagination button:nth-child(2) {
+  margin: 0;
+}
+
+.table__pagination span {
+  padding-top: 2px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  background-color: var(--white);
+  margin-right: 5px;
+}
+
+.table__paginationDivider {
+  width: 3px;
+  height: 30px;
+  background-color: var(--black);
+  margin: 0 6px;
+}
+
+.table__topRow tr {
+  display: flex;
+}
+
+.table__flag {
+  width: 100px;
+  background-color: var(--light-grey);
+  margin-top: 20px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border-right: 2px solid var(--grey);
 }
