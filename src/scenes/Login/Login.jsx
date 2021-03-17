@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Redirect, withRouter } from 'react-router';
 import './Login.scoped.css';
 
+const axios = require('axios');
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -14,13 +16,60 @@ class Login extends Component {
     this.nameAutoFocus = false;
   }
 
-  render() {
-    const {
+  handleSubmit = async (
+    e,
+    url,
+    username,
+    password,
+    handleCurrentData,
+    handleCurrentTable,
+  ) => {
+    e.preventDefault();
+
+    const loginUser = async (credentials) => {
+      try {
+        const resp = await axios.post(`${url}/login`, credentials);
+        return resp;
+      } catch (err) {
+        console.error(err);
+      }
+
+      return null;
+    };
+
+    const token = await loginUser({
       username,
       password,
-      setUsername,
-      setPassword,
-      handleSubmit,
+    });
+
+    if (token) {
+      sessionStorage.setItem('token', token.data);
+      try {
+        const res = await axios.get(`${url}/donor/asc`, {
+          headers: { Authorization: `Bearer ${token.data}` },
+        });
+
+        handleCurrentData(res.data);
+        handleCurrentTable('donors');
+        return true;
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    return false;
+  };
+
+  render() {
+    const {
+      url,
+      history,
+      username,
+      password,
+      handleUsername,
+      handlePassword,
+      handleCurrentData,
+      handleCurrentTable,
     } = this.props;
 
     return (
@@ -33,20 +82,19 @@ class Login extends Component {
               name="username"
               value={username}
               placeholder="Username"
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => handleUsername(e.target.value)}
             />
             <input
               type="password"
               name="password"
               value={password}
               placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => handlePassword(e.target.value)}
             />
             <button
               id="login__proceed--btn"
               onClick={(e) => {
-                handleSubmit(e).then((resp) => {
-                  const { history } = this.props;
+                this.handleSubmit(e, url, username, password).then((resp) => {
                   if (resp) history.push('/dashboard');
                 });
               }}

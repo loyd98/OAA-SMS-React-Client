@@ -14,35 +14,10 @@ export default class Dashboard extends Component {
   }
 
   render() {
-    const {
-      data,
-      currentTable,
-      username,
-      setShowAdd,
-      setCurrentId,
-      searchQuery,
-      handleSearch,
-      setCurrentTable,
-      config,
-      handleRead,
-    } = this.props;
-
     return (
       <div className="dashboard flex--vertical">
-        <SearchBar
-          username={username}
-          searchQuery={searchQuery}
-          handleSearch={handleSearch}
-        />
-        <TableContainer
-          data={data}
-          currentTable={currentTable}
-          setShowAdd={setShowAdd}
-          setCurrentId={setCurrentId}
-          setCurrentTable={setCurrentTable}
-          config={config}
-          handleRead={handleRead}
-        />
+        <SearchBar />
+        <TableContainer />
       </div>
     );
   }
